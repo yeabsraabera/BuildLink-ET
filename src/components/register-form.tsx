@@ -16,7 +16,7 @@ type ApiBody = {
 
 type Town = { id: string; name: string; region: string; zone: string };
 
-export function RegisterForm() {
+export function RegisterForm({ nextPath = "/dashboard" }: { nextPath?: string }) {
   const router = useRouter();
   const [towns, setTowns] = useState<Town[]>([]);
   const [townsError, setTownsError] = useState("");
@@ -68,7 +68,7 @@ export function RegisterForm() {
         setError(body.errors?.[0]?.message || body.message || "Could not register");
         return;
       }
-      router.push("/");
+      router.push(nextPath);
       router.refresh();
     } catch {
       setError("Could not reach the server");

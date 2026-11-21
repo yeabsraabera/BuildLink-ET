@@ -14,7 +14,7 @@ type ApiBody = {
   errors?: { path: string; message: string }[];
 };
 
-export function LoginForm() {
+export function LoginForm({ nextPath = "/dashboard" }: { nextPath?: string }) {
   const router = useRouter();
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
@@ -38,7 +38,7 @@ export function LoginForm() {
         setError(body.errors?.[0]?.message || body.message || "Could not log in");
         return;
       }
-      router.push("/");
+      router.push(nextPath);
       router.refresh();
     } catch {
       setError("Could not reach the server");
