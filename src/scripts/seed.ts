@@ -6,6 +6,7 @@ import { listingDetailsSchema, requestWriteSchema } from "../lib/validators";
 import { Listing } from "../models/Listing";
 import { Location } from "../models/Location";
 import { Request } from "../models/Request";
+import { Review } from "../models/Review";
 import { User } from "../models/User";
 
 const DEMO_PASSWORD = "demo123";
@@ -22,13 +23,185 @@ const locationSeeds = [
   { name: "Bonga", region: "Southwest Ethiopia", zone: "Kafa" },
 ];
 
-const userSeeds = [
-  { email: "admin@buildlink.et", name: "Abel Mekonnen", town: "Jimma", isAdmin: true },
-  { email: "sara@buildlink.et", name: "Sara Bekele", town: "Jimma", isAdmin: false },
-  { email: "dawit@buildlink.et", name: "Dawit Tadesse", town: "Agaro", isAdmin: false },
-  { email: "hana@buildlink.et", name: "Hana Girma", town: "Jimma", isAdmin: false },
-  { email: "yonas@buildlink.et", name: "Yonas Alemu", town: "Bedele", isAdmin: false },
-  { email: "meron@buildlink.et", name: "Meron Abebe", town: "Mettu", isAdmin: false },
+type ExperienceSeed = { title: string; company: string; years: string; description: string };
+
+type UserSeed = {
+  email: string;
+  name: string;
+  town: string;
+  isAdmin: boolean;
+  profileRole: "contractor" | "employer" | "both";
+  headline: string;
+  bio: string;
+  skills: string[];
+  experience: ExperienceSeed[];
+  avatarUrl: string;
+};
+
+const userSeeds: UserSeed[] = [
+  {
+    email: "admin@buildlink.et",
+    name: "Abel Mekonnen",
+    town: "Jimma",
+    isAdmin: true,
+    profileRole: "both",
+    headline: "BuildLink ET administrator",
+    bio: "Reviews listings for the Jimma pilot and keeps the marketplace usable.",
+    skills: ["Moderation"],
+    experience: [
+      {
+        title: "Platform admin",
+        company: "BuildLink ET",
+        years: "2026",
+        description: "Reviews listings and reports for the Jimma pilot.",
+      },
+    ],
+    avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&q=80",
+  },
+  {
+    email: "sara@buildlink.et",
+    name: "Sara Tadesse",
+    town: "Jimma",
+    isAdmin: false,
+    profileRole: "employer",
+    headline: "House builder in Jimma",
+    bio: "Building a family house near Aba Jifar and hiring local crews for masonry, finishing, and site coordination.",
+    skills: ["Site supervision", "Budgeting"],
+    experience: [
+      {
+        title: "Owner-builder",
+        company: "Private house, Jimma",
+        years: "2024-present",
+        description: "Running a two-storey house build from foundation to finishes.",
+      },
+    ],
+    avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=256&q=80",
+  },
+  {
+    email: "meron@buildlink.et",
+    name: "Meron Haile",
+    town: "Mettu",
+    isAdmin: false,
+    profileRole: "employer",
+    headline: "Renovation lead, Mettu",
+    bio: "Renovating a shop and small rooms in Mettu. Needs masons and finishing trades, and lists leftover materials.",
+    skills: ["Renovation", "Procurement"],
+    experience: [
+      {
+        title: "Shop renovation",
+        company: "Haile Trading, Mettu",
+        years: "2025-present",
+        description: "Replacing floors, walls, and wiring in a street-front shop.",
+      },
+    ],
+    avatarUrl: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=256&q=80",
+  },
+  {
+    email: "abebe@buildlink.et",
+    name: "Abebe Bekele",
+    town: "Bonga",
+    isAdmin: false,
+    profileRole: "employer",
+    headline: "Clinic extension, Bonga",
+    bio: "Hiring electricians and labour for a small clinic extension in Bonga, with a clear start date and a fixed budget.",
+    skills: ["Project coordination"],
+    experience: [
+      {
+        title: "Clinic extension owner",
+        company: "Bonga health post",
+        years: "2026",
+        description: "Adding two rooms and a waiting area to an existing clinic.",
+      },
+    ],
+    avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=256&q=80",
+  },
+  {
+    email: "dawit@buildlink.et",
+    name: "Dawit Kebede",
+    town: "Agaro",
+    isAdmin: false,
+    profileRole: "contractor",
+    headline: "Mason for houses and small shops",
+    bio: "Blockwork, plaster, and finishing around Agaro and Jimma. I bring my own trowels and can join a crew or lead a small team.",
+    skills: ["Masonry", "Blockwork", "Plaster"],
+    experience: [
+      {
+        title: "Lead mason",
+        company: "Private houses, Agaro",
+        years: "2019-present",
+        description: "Laid block walls and plastered interiors for family houses.",
+      },
+      {
+        title: "Mason",
+        company: "Shop builds, Jimma",
+        years: "2016-2019",
+        description: "Worked on street-front shops: foundations, walls, and pointing.",
+      },
+      {
+        title: "Helper then mason",
+        company: "Local crews, Agaro",
+        years: "2014-2016",
+        description: "Started as a helper mixing mortar, then took on wall courses.",
+      },
+    ],
+    avatarUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=256&q=80",
+  },
+  {
+    email: "hana@buildlink.et",
+    name: "Hana Alemu",
+    town: "Jimma",
+    isAdmin: false,
+    profileRole: "contractor",
+    headline: "Electrician for houses and small sites",
+    bio: "House wiring, sockets, and lighting in Jimma. I read drawings, work to code, and can estimate materials before starting.",
+    skills: ["House wiring", "Lighting", "Distribution boards"],
+    experience: [
+      {
+        title: "House electrician",
+        company: "Independent, Jimma",
+        years: "2021-present",
+        description: "Wired new houses and rewired older rooms for families in Jimma.",
+      },
+      {
+        title: "Electrician assistant",
+        company: "Site crews, Jimma",
+        years: "2018-2021",
+        description: "Pulled cables and fitted sockets on housing sites.",
+      },
+    ],
+    avatarUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=256&q=80",
+  },
+  {
+    email: "yonas@buildlink.et",
+    name: "Yonas Girma",
+    town: "Bedele",
+    isAdmin: false,
+    profileRole: "contractor",
+    headline: "Site engineer for small builds",
+    bio: "Sets out foundations, checks levels, and keeps a small site moving in Bedele and Jimma. Also lists mixers and tools for hire.",
+    skills: ["Setting out", "Site supervision", "Quantity checks"],
+    experience: [
+      {
+        title: "Site engineer",
+        company: "House projects, Bedele",
+        years: "2022-present",
+        description: "Ran day-to-day setting out and quality checks on family houses.",
+      },
+      {
+        title: "Junior site engineer",
+        company: "Contractor crews, Jimma",
+        years: "2019-2022",
+        description: "Supported the engineer with measurements and material counts.",
+      },
+      {
+        title: "Survey helper",
+        company: "Local projects, Bedele",
+        years: "2017-2019",
+        description: "Held tapes and recorded levels on small public works.",
+      },
+    ],
+    avatarUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=256&q=80",
+  },
 ];
 
 type ListingSeed = {
@@ -48,53 +221,96 @@ const listingSeeds: ListingSeed[] = [
     seedKey: "job-site-engineer",
     type: "job",
     ownerEmail: "sara@buildlink.et",
-    title: "Junior site engineer",
+    title: "Junior site engineer, Jimma house build",
     description:
-      "A Jimma contractor needs a junior site engineer for a residential block. The role covers daily site checks, concrete pours, and reporting to the supervisor.",
+      "A two-storey house in Jimma needs a junior site engineer to check levels, keep a simple daily log, and coordinate masons for six weeks. You will walk the site each morning and report to the owner.",
     category: "Civil engineering",
     town: "Jimma",
     details: {
       experienceLevel: "junior",
-      employmentType: "permanent",
+      employmentType: "contract",
+      workersNeeded: 1,
+      duration: "6 weeks",
+      startDate: "2026-12-08",
+      payType: "per month",
+      payAmount: 18000,
       salaryNegotiable: false,
       salaryAmount: 18000,
       currency: "ETB",
-      applicationDeadline: "2026-12-31",
-      skills: ["site supervision", "concrete works"],
+      applicationDeadline: "2026-12-15",
+      skills: ["setting out", "site diary"],
     },
   },
   {
     seedKey: "job-mason",
     type: "job",
-    ownerEmail: "sara@buildlink.et",
-    title: "Mason for a two-storey house",
+    ownerEmail: "meron@buildlink.et",
+    title: "Mason for blockwork, Mettu shop",
     description:
-      "A house build in Agaro needs a mason for blockwork and plaster. The job is contract work and can start this month.",
+      "We need two masons for block walls and plaster on a shop renovation in Mettu. Daily paid work for about three weeks. Bring your own trowel and level.",
     category: "Masonry",
-    town: "Agaro",
+    town: "Mettu",
     details: {
       experienceLevel: "intermediate",
-      employmentType: "contract",
-      salaryNegotiable: true,
+      employmentType: "daily",
+      workersNeeded: 2,
+      duration: "3 weeks",
+      startDate: "2026-12-01",
+      payType: "per day",
+      payAmount: 800,
+      salaryNegotiable: false,
+      salaryAmount: 800,
       currency: "ETB",
+      applicationDeadline: "2026-11-30",
       skills: ["blockwork", "plaster"],
     },
   },
   {
     seedKey: "job-electrician",
     type: "job",
-    ownerEmail: "sara@buildlink.et",
-    title: "Contract electrician",
+    ownerEmail: "abebe@buildlink.et",
+    title: "House electrician, Bonga clinic",
     description:
-      "Wiring and fittings for a small commercial shop in Jimma. Experience with house and shop circuits is enough.",
+      "Wiring, sockets, and lighting for a two-room clinic extension in Bonga. Fixed fee for the full job. Bring your own hand tools. Materials are supplied.",
     category: "Electrical installation",
-    town: "Jimma",
+    town: "Bonga",
     details: {
       experienceLevel: "junior",
       employmentType: "contract",
+      workersNeeded: 1,
+      duration: "10 days",
+      startDate: "2026-12-10",
+      payType: "fixed fee",
+      payAmount: 22000,
+      salaryNegotiable: false,
+      salaryAmount: 22000,
+      currency: "ETB",
+      applicationDeadline: "2026-12-01",
+      skills: ["house wiring", "lighting"],
+    },
+  },
+  {
+    seedKey: "job-plaster",
+    type: "job",
+    ownerEmail: "sara@buildlink.et",
+    title: "Plaster crew, Jimma finishes",
+    description:
+      "Internal plaster and pointing on a two-storey house in Jimma. The owner needs three workers for two weeks. Pay is negotiable within a stated range.",
+    category: "Masonry",
+    town: "Jimma",
+    details: {
+      experienceLevel: "junior",
+      employmentType: "daily",
+      workersNeeded: 3,
+      duration: "2 weeks",
+      startDate: "2026-12-20",
+      payType: "negotiable",
+      payMin: 600,
+      payMax: 900,
       salaryNegotiable: true,
       currency: "ETB",
-      skills: ["wiring", "fittings"],
+      applicationDeadline: "2026-12-10",
+      skills: ["plaster", "pointing"],
     },
   },
   {
@@ -209,16 +425,16 @@ const listingSeeds: ListingSeed[] = [
     seedKey: "professional-hana",
     type: "professional",
     ownerEmail: "hana@buildlink.et",
-    title: "Hana Girma",
+    title: "Hana Alemu, electrician",
     description:
-      "Civil engineer based in Jimma. Hana supervises residential builds and checks quantities before concrete is poured.",
-    category: "Civil engineering",
+      "Electrician based in Jimma. Hana wires houses and small sites, fits sockets and lighting, and can estimate materials before starting.",
+    category: "Electrical installation",
     town: "Jimma",
     verification: "pending",
     details: {
-      headline: "Civil engineer for residential sites",
-      profession: "Civil engineer",
-      skills: ["site supervision", "quantity checks"],
+      headline: "Electrician for houses and small sites",
+      profession: "Electrician",
+      skills: ["house wiring", "lighting"],
       availability: "Available",
     },
   },
@@ -226,13 +442,13 @@ const listingSeeds: ListingSeed[] = [
     seedKey: "professional-dawit",
     type: "professional",
     ownerEmail: "dawit@buildlink.et",
-    title: "Dawit Tadesse",
+    title: "Dawit Kebede, mason",
     description:
       "Mason and plasterer in Agaro. Dawit takes blockwork, plaster, and small repair jobs for houses and shops.",
     category: "Masonry",
     town: "Agaro",
     details: {
-      headline: "Mason and plasterer",
+      headline: "Mason for houses and small shops",
       profession: "Mason",
       skills: ["blockwork", "plaster"],
       availability: "Available",
@@ -241,18 +457,184 @@ const listingSeeds: ListingSeed[] = [
   {
     seedKey: "professional-sara",
     type: "professional",
-    ownerEmail: "sara@buildlink.et",
-    title: "Sara Bekele",
+    ownerEmail: "yonas@buildlink.et",
+    title: "Yonas Girma, site engineer",
     description:
-      "Site supervisor who runs small residential jobs in Jimma and nearby towns. Sara coordinates crews, materials, and daily progress.",
-    category: "Site supervision",
-    town: "Jimma",
+      "Site engineer who sets out foundations, checks levels, and keeps a small house site moving in Bedele and Jimma. Yonas also lists mixers and tools.",
+    category: "Civil engineering",
+    town: "Bedele",
     details: {
-      headline: "Site supervisor for house builds",
-      profession: "Site supervisor",
-      skills: ["crew coordination", "progress reports"],
+      headline: "Site engineer for small builds",
+      profession: "Site engineer",
+      skills: ["setting out", "site supervision"],
       availability: "Limited",
     },
+  },
+];
+
+type AcceptedSeed = {
+  seedKey: string;
+  listingKey: string;
+  fromEmail: string;
+  toEmail: string;
+  message: string;
+};
+
+const acceptedJobSeeds: AcceptedSeed[] = [
+  {
+    seedKey: "request-accepted-dawit-mason",
+    listingKey: "job-mason",
+    fromEmail: "dawit@buildlink.et",
+    toEmail: "meron@buildlink.et",
+    message: "I can lead the blockwork in Mettu and bring a helper for mixing.",
+  },
+  {
+    seedKey: "request-accepted-hana-mason",
+    listingKey: "job-mason",
+    fromEmail: "hana@buildlink.et",
+    toEmail: "meron@buildlink.et",
+    message: "I can fit temporary site power while the walls go up.",
+  },
+  {
+    seedKey: "request-accepted-yonas-mason",
+    listingKey: "job-mason",
+    fromEmail: "yonas@buildlink.et",
+    toEmail: "meron@buildlink.et",
+    message: "I can set out the shop floor and check the wall lines.",
+  },
+  {
+    seedKey: "request-accepted-dawit-electrician",
+    listingKey: "job-electrician",
+    fromEmail: "dawit@buildlink.et",
+    toEmail: "abebe@buildlink.et",
+    message: "I can chase walls and close up after the wiring.",
+  },
+  {
+    seedKey: "request-accepted-hana-electrician",
+    listingKey: "job-electrician",
+    fromEmail: "hana@buildlink.et",
+    toEmail: "abebe@buildlink.et",
+    message: "I can wire the two clinic rooms and label the board.",
+  },
+  {
+    seedKey: "request-accepted-yonas-electrician",
+    listingKey: "job-electrician",
+    fromEmail: "yonas@buildlink.et",
+    toEmail: "abebe@buildlink.et",
+    message: "I can check levels before you chase walls for cables.",
+  },
+  {
+    seedKey: "request-accepted-dawit-plaster",
+    listingKey: "job-plaster",
+    fromEmail: "dawit@buildlink.et",
+    toEmail: "sara@buildlink.et",
+    message: "I can lead the plaster crew and keep the finish even.",
+  },
+  {
+    seedKey: "request-accepted-hana-plaster",
+    listingKey: "job-plaster",
+    fromEmail: "hana@buildlink.et",
+    toEmail: "sara@buildlink.et",
+    message: "I can move fittings so the plaster crew can close the walls.",
+  },
+  {
+    seedKey: "request-accepted-yonas-plaster",
+    listingKey: "job-plaster",
+    fromEmail: "yonas@buildlink.et",
+    toEmail: "sara@buildlink.et",
+    message: "I can check room levels before plaster starts.",
+  },
+];
+
+type ReviewSeed = {
+  seedKey: string;
+  requestKey: string;
+  reviewerEmail: string;
+  revieweeEmail: string;
+  rating: number;
+  comment: string;
+};
+
+const reviewSeeds: ReviewSeed[] = [
+  {
+    seedKey: "review-meron-dawit",
+    requestKey: "request-accepted-dawit-mason",
+    reviewerEmail: "meron@buildlink.et",
+    revieweeEmail: "dawit@buildlink.et",
+    rating: 5,
+    comment: "Dawit laid the shop walls cleanly and finished on time. The plaster is even.",
+  },
+  {
+    seedKey: "review-abebe-dawit",
+    requestKey: "request-accepted-dawit-electrician",
+    reviewerEmail: "abebe@buildlink.et",
+    revieweeEmail: "dawit@buildlink.et",
+    rating: 4,
+    comment: "Solid chase-and-close work around the clinic wiring. I would hire him again.",
+  },
+  {
+    seedKey: "review-sara-dawit",
+    requestKey: "request-accepted-dawit-plaster",
+    reviewerEmail: "sara@buildlink.et",
+    revieweeEmail: "dawit@buildlink.et",
+    rating: 5,
+    comment: "He led the plaster crew and set a good pace. Rooms are ready to paint.",
+  },
+  {
+    seedKey: "review-abebe-hana",
+    requestKey: "request-accepted-hana-electrician",
+    reviewerEmail: "abebe@buildlink.et",
+    revieweeEmail: "hana@buildlink.et",
+    rating: 5,
+    comment: "Hana wired the clinic rooms carefully and labelled the board.",
+  },
+  {
+    seedKey: "review-meron-hana",
+    requestKey: "request-accepted-hana-mason",
+    reviewerEmail: "meron@buildlink.et",
+    revieweeEmail: "hana@buildlink.et",
+    rating: 5,
+    comment: "Came to Mettu for shop lighting. Finished in two days and left the site tidy.",
+  },
+  {
+    seedKey: "review-sara-hana",
+    requestKey: "request-accepted-hana-plaster",
+    reviewerEmail: "sara@buildlink.et",
+    revieweeEmail: "hana@buildlink.et",
+    rating: 4,
+    comment: "Clear about fittings before plaster. A couple of sockets moved, then it was done.",
+  },
+  {
+    seedKey: "review-sara-yonas",
+    requestKey: "request-accepted-yonas-plaster",
+    reviewerEmail: "sara@buildlink.et",
+    revieweeEmail: "yonas@buildlink.et",
+    rating: 5,
+    comment: "Yonas caught a level error before plaster. The site diary was easy to follow.",
+  },
+  {
+    seedKey: "review-meron-yonas",
+    requestKey: "request-accepted-yonas-mason",
+    reviewerEmail: "meron@buildlink.et",
+    revieweeEmail: "yonas@buildlink.et",
+    rating: 4,
+    comment: "Helped set out the shop floor. Calm on site and clear with the masons.",
+  },
+  {
+    seedKey: "review-abebe-yonas",
+    requestKey: "request-accepted-yonas-electrician",
+    reviewerEmail: "abebe@buildlink.et",
+    revieweeEmail: "yonas@buildlink.et",
+    rating: 5,
+    comment: "Checked our clinic slab levels before we poured. Would hire again.",
+  },
+  {
+    seedKey: "review-sara-yonas-extra",
+    requestKey: "request-accepted-yonas-plaster",
+    reviewerEmail: "yonas@buildlink.et",
+    revieweeEmail: "sara@buildlink.et",
+    rating: 5,
+    comment: "Sara paid on the agreed days and had materials ready when the crew arrived.",
   },
 ];
 
@@ -264,10 +646,7 @@ async function upsertLocation(seed: (typeof locationSeeds)[number]) {
   return location;
 }
 
-async function upsertUser(
-  seed: (typeof userSeeds)[number],
-  passwordHash: string,
-) {
+async function upsertUser(seed: UserSeed, passwordHash: string) {
   const existing = await User.findOne({ email: seed.email });
   const user = existing ?? new User({ email: seed.email });
   user.set({
@@ -276,6 +655,12 @@ async function upsertUser(
     isAdmin: seed.isAdmin,
     accountStatus: "active",
     passwordHash,
+    role: seed.profileRole,
+    headline: seed.headline,
+    bio: seed.bio,
+    skills: seed.skills,
+    experience: seed.experience,
+    avatarUrl: seed.avatarUrl,
   });
   await user.save();
   return user;
@@ -287,8 +672,8 @@ function validateSeedShapes() {
     listingDetailsSchema.parse({ type: seed.type, details: seed.details });
     counts[seed.type] += 1;
   }
-  if (Object.values(counts).some((count) => count !== 3)) {
-    throw new Error("Each module needs three demo listings");
+  if (counts.job < 3 || counts.material !== 3 || counts.rental !== 3 || counts.professional !== 3) {
+    throw new Error("Seed needs at least three jobs and three listings in each other module");
   }
   const pending = listingSeeds.filter(
     (seed) => seed.type === "professional" && seed.verification === "pending",
@@ -397,14 +782,45 @@ async function main() {
     status: "Approved",
   });
 
-  console.log("Seed complete. Re-running updates the same demo records.");
-  console.log(`Password for every demo account: ${DEMO_PASSWORD}`);
-  for (const user of userSeeds) {
-    console.log(`${user.email}${user.isAdmin ? " (admin)" : ""}`);
+  const requests = new Map<string, mongoose.Types.ObjectId>();
+  for (const seed of acceptedJobSeeds) {
+    const listing = listings.get(seed.listingKey);
+    const from = users.get(seed.fromEmail);
+    const to = users.get(seed.toEmail);
+    if (!listing || !from || !to) throw new Error(`Missing ids for ${seed.seedKey}`);
+    const saved = await upsertRequest(seed.seedKey, {
+      type: "job",
+      listing,
+      from,
+      to,
+      message: seed.message,
+      status: "Accepted",
+    });
+    requests.set(seed.seedKey, saved._id);
   }
-  console.log(`Locations: ${locations.size}`);
-  console.log(`Listings: ${listings.size}`);
-  console.log("Requests: job application Submitted, rental booking Approved 2026-12-01 to 2026-12-05");
+
+  for (const seed of reviewSeeds) {
+    const relatedRequest = requests.get(seed.requestKey);
+    const reviewer = users.get(seed.reviewerEmail);
+    const reviewee = users.get(seed.revieweeEmail);
+    const listing = acceptedJobSeeds.find((item) => item.seedKey === seed.requestKey);
+    const relatedListing = listing ? listings.get(listing.listingKey) : undefined;
+    if (!relatedRequest || !reviewer || !reviewee || !relatedListing) {
+      throw new Error(`Missing ids for ${seed.seedKey}`);
+    }
+    await upsertReview(seed.seedKey, {
+      reviewer,
+      reviewee,
+      rating: seed.rating,
+      comment: seed.comment,
+      relatedListing,
+      relatedRequest,
+    });
+  }
+
+  console.log("Seed complete. Re-running updates the same records.");
+  console.log(`Accounts: ${userSeeds.length}. Listings: ${listings.size}. Reviews: ${reviewSeeds.length}.`);
+  console.log("Requests: one Submitted job application, nine Accepted jobs, mixer Approved 2026-12-01 to 2026-12-05.");
   console.log("Professional verification pending: hana@buildlink.et");
 }
 
@@ -413,6 +829,15 @@ async function upsertRequest(seedKey: string, data: Record<string, unknown>) {
   const request = existing ?? new Request({ seedKey });
   request.set(data);
   await request.save();
+  return request;
+}
+
+async function upsertReview(seedKey: string, data: Record<string, unknown>) {
+  const existing = await Review.findOne({ seedKey });
+  const review = existing ?? new Review({ seedKey });
+  review.set(data);
+  await review.save();
+  return review;
 }
 
 main()

@@ -14,14 +14,11 @@ MongoDB must be running at `mongodb://127.0.0.1:27017/buildlink-et`. Copy `.env.
 
 Open http://localhost:3000
 
-Every seeded account uses the password `demo123`.
+Seeded accounts (password is only in the seed script, never shown in the UI):
 
-- `admin@buildlink.et` (admin)
-- `sara@buildlink.et`
-- `dawit@buildlink.et`
-- `hana@buildlink.et`
-- `yonas@buildlink.et`
-- `meron@buildlink.et`
+- Abel Mekonnen, admin
+- Sara Tadesse, Meron Haile, Abebe Bekele, employers
+- Dawit Kebede, Hana Alemu, Yonas Girma, contractors
 
 ## Checks
 
