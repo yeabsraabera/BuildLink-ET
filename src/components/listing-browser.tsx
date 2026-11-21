@@ -8,7 +8,7 @@ import { errorText, readApi } from "@/components/api-client";
 import { detailText, type ListingCard, type LocationOption } from "@/components/listing-types";
 import { StatusBadge } from "@/components/status-badge";
 import { fieldClass, linkClass, moduleEmoji, outlineClass, pageClass, primaryClass } from "@/components/ui";
-import { payLabel } from "@/lib/home";
+import { payLabel } from "@/lib/pay";
 import { moduleMeta } from "@/lib/modules";
 import type { ListingType } from "@/lib/status";
 

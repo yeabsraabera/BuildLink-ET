@@ -9,7 +9,7 @@ import { detailText, type ListingCard, type RequestCard } from "@/components/lis
 import { ReviewForm } from "@/components/review-form";
 import { StatusBadge } from "@/components/status-badge";
 import { fieldClass, linkClass, outlineClass, primaryClass } from "@/components/ui";
-import { payLabel } from "@/lib/home";
+import { payLabel } from "@/lib/pay";
 import { moduleMeta } from "@/lib/modules";
 import { isFinalRequestStatus, listingStatus, requestStatus, type ListingType } from "@/lib/status";
 
