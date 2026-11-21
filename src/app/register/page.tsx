@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Register" };
 export default function RegisterPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
   return (
     <AuthFrame
-      title="Create a free account"
+      title="Create an account"
       subtitle="One account for jobs, materials, rentals, and professionals."
     >
       <Suspense fallback={<p className="text-sm text-muted">Loading towns...</p>}>

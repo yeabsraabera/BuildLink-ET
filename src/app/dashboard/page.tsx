@@ -7,7 +7,8 @@ import { errorText, readApi } from "@/components/api-client";
 import type { ListingCard, RequestCard } from "@/components/listing-types";
 import { ReviewForm } from "@/components/review-form";
 import { StatusBadge } from "@/components/status-badge";
-import { linkClass, moduleEmoji, outlineClass, pageClass, primaryClass } from "@/components/ui";
+import { ModulePhoto } from "@/components/module-photo";
+import { linkClass, outlineClass, pageClass, primaryClass } from "@/components/ui";
 import { moduleMeta } from "@/lib/modules";
 import { isFinalRequestStatus, listingStatus, requestStatus, type ListingType } from "@/lib/status";
 
@@ -161,9 +162,7 @@ export default function DashboardPage() {
               {listings.map((item) => (
                 <li key={item.id} className="min-w-0 rounded-xl border border-line bg-card p-4">
                   <div className="flex items-start justify-between gap-3">
-                    <span className="text-2xl" aria-hidden>
-                      {moduleEmoji[item.type]}
-                    </span>
+                    <ModulePhoto type={item.type} />
                     <StatusBadge status={item.status} />
                   </div>
                   <p className="mt-3 text-sm text-muted">{moduleMeta[item.type].title}</p>

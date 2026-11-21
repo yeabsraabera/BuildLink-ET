@@ -1,11 +1,13 @@
 import Link from "next/link";
 
+import { BrandLogo } from "@/components/brand-logo";
+
 export function SiteFooter() {
   return (
     <footer className="bg-navy text-white">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:grid-cols-3">
         <div>
-          <p>BuildLink ET</p>
+          <BrandLogo className="h-24" />
           <p className="mt-2 text-sm leading-6 text-white/75">
             Construction jobs, contractors, surplus materials, and equipment rentals in Southwest Ethiopia.
           </p>

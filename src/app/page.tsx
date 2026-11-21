@@ -9,27 +9,27 @@ import { loadHomeContent } from "@/lib/home";
 const HERO =
   "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1800&q=80";
 const CARD_HIRE =
-  "https://images.unsplash.com/photo-1504309092620-4d0ec726efa4?auto=format&fit=crop&w=900&q=80";
+  "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=900&q=80";
 const CARD_JOBS =
   "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=900&q=80";
 const CARD_RENT =
-  "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=900&q=80";
+  "https://images.unsplash.com/photo-1517089152318-42ec560349c0?auto=format&fit=crop&w=900&q=80";
 
 const introCards = [
   {
-    href: "/register",
+    href: "/professionals",
     image: CARD_HIRE,
     title: "Hire skilled contractors",
     text: "Find masons, electricians, and site engineers who already work in Jimma and nearby towns.",
   },
   {
-    href: "/register",
+    href: "/jobs",
     image: CARD_JOBS,
     title: "Find construction jobs",
     text: "See what the site needs, what it pays, and apply with a short cover message.",
   },
   {
-    href: "/register",
+    href: "/rentals",
     image: CARD_RENT,
     title: "Rent equipment and reuse materials",
     text: "Borrow mixers and tools, or pick up surplus from a finished job.",
@@ -49,20 +49,9 @@ export default function HomePage() {
           <p className="mt-4 max-w-2xl text-base leading-7 text-white/90 sm:text-lg">
             Jobs, contractors, surplus materials and equipment rentals across Southwest Ethiopia
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link
-              href="/register"
-              className="inline-flex rounded-xl bg-accent px-5 py-2.5 text-sm text-accent-ink hover:bg-accent-hover"
-            >
-              Create free account
-            </Link>
-            <Link
-              href="/login"
-              className="inline-flex rounded-xl border border-white px-5 py-2.5 text-sm text-white hover:bg-white/10"
-            >
-              Log in
-            </Link>
-          </div>
+          <Suspense fallback={<div className="mt-8 h-11" />}>
+            <HeroCtas />
+          </Suspense>
         </div>
       </section>
 
@@ -90,12 +79,34 @@ export default function HomePage() {
   );
 }
 
+async function HeroCtas() {
+  await connection();
+  const signedIn = Boolean(await getSessionUser());
+  if (signedIn) {
+    return (
+      <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <Link href="/dashboard" className="inline-flex rounded-xl bg-accent px-5 py-2.5 text-sm text-accent-ink hover:bg-accent-hover">
+          Go to dashboard
+        </Link>
+      </div>
+    );
+  }
+  return (
+    <div className="mt-8 flex flex-wrap justify-center gap-3">
+      <Link href="/register" className="inline-flex rounded-xl bg-accent px-5 py-2.5 text-sm text-accent-ink hover:bg-accent-hover">
+        Create account
+      </Link>
+      <Link href="/login" className="inline-flex rounded-xl border border-white px-5 py-2.5 text-sm text-white hover:bg-white/10">
+        Log in
+      </Link>
+    </div>
+  );
+}
+
 async function LiveHome() {
   await connection();
   const signedIn = Boolean(await getSessionUser());
   const { stats, contractors, jobs } = await loadHomeContent();
-  const jobHref = (id: string) => (signedIn ? `/jobs/${id}` : `/login?next=/jobs/${id}`);
-  const profileHref = (id: string) => (signedIn ? `/profile/${id}` : `/login?next=/profile/${id}`);
 
   return (
     <>
@@ -141,7 +152,7 @@ async function LiveHome() {
                     </span>
                   ))}
                 </div>
-                <Link href={profileHref(person.id)} className="mt-4 inline-flex rounded-xl bg-accent px-3 py-1.5 text-sm text-accent-ink">
+                <Link href={`/profile/${person.id}`} className="mt-4 inline-flex rounded-xl bg-accent px-3 py-1.5 text-sm text-accent-ink">
                   View profile
                 </Link>
               </li>
@@ -158,7 +169,7 @@ async function LiveHome() {
           <ul className="mt-5 grid gap-3">
             {jobs.map((job) => (
               <li key={job.id}>
-                <Link href={jobHref(job.id)} className="block rounded-xl border border-line bg-card p-4 hover:bg-page">
+                <Link href={`/jobs/${job.id}`} className="block rounded-xl border border-line bg-card p-4 hover:bg-page">
                   <p>{job.title}</p>
                   <p className="mt-1 text-sm text-muted">
                     {job.town} · {job.pay} · {job.employmentType}
@@ -215,9 +226,14 @@ async function LiveHome() {
 
       <section className="mt-14 bg-navy px-4 py-12 text-center text-white">
         <h2 className="text-2xl">Ready to get on site?</h2>
-        <p className="mt-2 text-sm text-white/80">Create a free account and post or apply today.</p>
-        <Link href="/register" className="mt-5 inline-flex rounded-xl bg-accent px-5 py-2.5 text-sm text-accent-ink">
-          Create free account
+        <p className="mt-2 text-sm text-white/80">
+          {signedIn ? "Your account is ready. Post a job or apply today." : "Create an account and post or apply today."}
+        </p>
+        <Link
+          href={signedIn ? "/dashboard" : "/register"}
+          className="mt-5 inline-flex rounded-xl bg-accent px-5 py-2.5 text-sm text-accent-ink"
+        >
+          {signedIn ? "Go to dashboard" : "Create account"}
         </Link>
       </section>
     </>

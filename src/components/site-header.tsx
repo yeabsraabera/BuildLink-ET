@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { BrandLogo } from "@/components/brand-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 const modules = [
@@ -61,15 +62,13 @@ export function SiteHeader() {
   return (
     <header className="bg-navy text-white">
       <div className="mx-auto flex min-w-0 max-w-6xl items-center gap-2 px-4 py-3">
-        <Link href="/" className="shrink-0 text-base">
-          BuildLink ET
-        </Link>
+        <BrandLogo className="h-20" />
         <nav className="ml-4 hidden min-w-0 items-center gap-1 md:flex" aria-label="Site">
           <NavLink href="/" pathname={pathname} label="Home" exact />
           {modules.map((item) => (
             <NavLink
               key={item.href}
-              href={session ? item.href : `/login?next=${item.href}`}
+              href={ready && !session ? `/login?next=${item.href}` : item.href}
               pathname={pathname}
               label={item.label}
               match={item.href}
@@ -103,7 +102,7 @@ export function SiteHeader() {
             {modules.map((item) => (
               <NavLink
                 key={item.href}
-                href={session ? item.href : `/login?next=${item.href}`}
+                href={ready && !session ? `/login?next=${item.href}` : item.href}
                 pathname={pathname}
                 label={item.label}
                 match={item.href}

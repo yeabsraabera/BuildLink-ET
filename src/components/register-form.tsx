@@ -153,7 +153,7 @@ export function RegisterForm({
         <input className={inputClass} name="phone" type="tel" autoComplete="tel" placeholder="09..." />
       </label>
       <button type="submit" disabled={pending || towns.length === 0} className={`${primaryClass} w-full`}>
-        {pending ? "Creating account..." : "Create free account"}
+        {pending ? "Creating account..." : "Create account"}
       </button>
       <p className="text-sm text-muted">
         Already registered?{" "}

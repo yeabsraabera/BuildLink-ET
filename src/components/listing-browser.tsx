@@ -7,7 +7,8 @@ import { useEffect, useState, type FormEvent } from "react";
 import { errorText, readApi } from "@/components/api-client";
 import { detailText, type ListingCard, type LocationOption } from "@/components/listing-types";
 import { StatusBadge } from "@/components/status-badge";
-import { fieldClass, linkClass, moduleEmoji, outlineClass, pageClass, primaryClass } from "@/components/ui";
+import { ModulePhoto } from "@/components/module-photo";
+import { fieldClass, linkClass, outlineClass, pageClass, primaryClass } from "@/components/ui";
 import { payLabel } from "@/lib/pay";
 import { moduleMeta } from "@/lib/modules";
 import type { ListingType } from "@/lib/status";
@@ -160,9 +161,7 @@ export function ListingBrowser({ type }: { type: ListingType }) {
           {items.map((item) => (
             <li key={item.id} className="min-w-0 rounded-xl border border-line bg-card p-4">
               <div className="flex items-start justify-between gap-3">
-                <span className="text-2xl" aria-hidden>
-                  {moduleEmoji[item.type]}
-                </span>
+                <ModulePhoto type={item.type} />
                 <StatusBadge status={item.status} />
               </div>
               <Link href={`${meta.path}/${item.id}`} className="mt-3 block break-words text-base">

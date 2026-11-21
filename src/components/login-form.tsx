@@ -77,7 +77,7 @@ export function LoginForm({ nextPath = "/dashboard" }: { nextPath?: string }) {
           href={nextPath === "/dashboard" ? "/register" : `/register?next=${encodeURIComponent(nextPath)}`}
           className={linkClass}
         >
-          Create a free account
+          Create an account
         </Link>
       </p>
     </form>

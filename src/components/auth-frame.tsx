@@ -1,6 +1,8 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
 
+import { BrandLogo } from "@/components/brand-logo";
+
 const PHOTO =
   "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1400&q=80";
 
@@ -20,7 +22,7 @@ export function AuthFrame({
           <Image src={PHOTO} alt="" fill priority className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
           <div className="absolute inset-0 bg-navy/70" />
           <div className="relative flex h-full min-h-56 flex-col justify-end p-6 md:min-h-[40rem] md:p-8">
-            <p className="text-sm text-accent">BuildLink ET</p>
+            <BrandLogo href={null} className="h-24" />
             <p className="mt-3 max-w-sm text-3xl leading-tight">Build Smarter. Connect Better. Waste Less.</p>
             <p className="mt-3 max-w-sm text-sm leading-6 text-white/85">
               Jobs, contractors, surplus materials and equipment rentals across Southwest Ethiopia.
