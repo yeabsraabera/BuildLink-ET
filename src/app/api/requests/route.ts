@@ -67,6 +67,7 @@ export async function POST(request: Request) {
       startDate: parsed.data.startDate ? parseDateOnly(parsed.data.startDate) : undefined,
       endDate: parsed.data.endDate ? parseDateOnly(parsed.data.endDate) : undefined,
       quantity: parsed.data.quantity,
+      proposedFee: parsed.data.proposedFee,
       status: requestStatus[parsed.data.type].initial,
     });
 

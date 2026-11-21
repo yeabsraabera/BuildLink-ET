@@ -12,6 +12,7 @@ const requestSchema = new Schema(
     startDate: { type: Date },
     endDate: { type: Date },
     quantity: { type: Number },
+    proposedFee: { type: Number },
     status: { type: String, required: true },
     seedKey: { type: String, select: false },
   },

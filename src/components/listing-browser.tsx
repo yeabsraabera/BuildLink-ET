@@ -8,6 +8,7 @@ import { errorText, readApi } from "@/components/api-client";
 import { detailText, type ListingCard, type LocationOption } from "@/components/listing-types";
 import { StatusBadge } from "@/components/status-badge";
 import { fieldClass, linkClass, moduleEmoji, outlineClass, pageClass, primaryClass } from "@/components/ui";
+import { payLabel } from "@/lib/home";
 import { moduleMeta } from "@/lib/modules";
 import type { ListingType } from "@/lib/status";
 
@@ -202,7 +203,7 @@ export function ListingBrowser({ type }: { type: ListingType }) {
 
 function summary(item: ListingCard) {
   if (item.type === "job") {
-    return `${detailText(item.details, "employmentType")} · ${detailText(item.details, "experienceLevel")}`;
+    return `${payLabel(item.details)} · ${detailText(item.details, "employmentType")} · ${detailText(item.details, "experienceLevel")}`;
   }
   if (item.type === "material") {
     return `${detailText(item.details, "quantity")} ${detailText(item.details, "unit")} · ${detailText(item.details, "price")} ETB`;

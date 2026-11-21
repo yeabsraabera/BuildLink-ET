@@ -87,6 +87,7 @@ export function publicRequest(
     startDate?: unknown;
     endDate?: unknown;
     quantity?: number;
+    proposedFee?: number;
     createdAt?: Date;
     listing?: unknown;
     from?: unknown;
@@ -107,6 +108,7 @@ export function publicRequest(
     startDate: dateOnly(request.startDate),
     endDate: dateOnly(request.endDate),
     quantity: request.quantity,
+    proposedFee: request.proposedFee,
     createdAt: request.createdAt ? new Date(request.createdAt).toISOString() : undefined,
     listing: {
       id: refId(request.listing),

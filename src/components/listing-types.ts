@@ -25,6 +25,7 @@ export type RequestCard = {
   startDate?: string;
   endDate?: string;
   quantity?: number;
+  proposedFee?: number;
   listing: { id: string; title: string; type: ListingType; status: string };
   from: { id: string; name: string; town: string };
   to: { id: string; name: string; town: string };

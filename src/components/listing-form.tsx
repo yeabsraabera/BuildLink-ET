@@ -14,6 +14,7 @@ import {
   jobExperience,
   materialConditions,
   moduleMeta,
+  payTypes,
   pricePeriods,
   rentalConditions,
 } from "@/lib/modules";
@@ -220,18 +221,36 @@ function TypeFields({ type, listing }: { type: ListingType; listing: ListingCard
             ))}
           </select>
         </Field>
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" name="salaryNegotiable" defaultChecked={details.salaryNegotiable !== false} />
-          Salary is negotiable
-        </label>
-        <Field label="Salary amount in ETB (optional)">
-          <input className={inputClass} name="salaryAmount" type="number" min="0" defaultValue={detailText(details, "salaryAmount")} />
+        <Field label="Workers needed">
+          <input className={inputClass} name="workersNeeded" type="number" min="1" required defaultValue={detailText(details, "workersNeeded") || "1"} />
         </Field>
-        <Field label="Application deadline (optional)">
+        <Field label="Duration">
+          <input className={inputClass} name="duration" required defaultValue={detailText(details, "duration") || "3 months"} />
+        </Field>
+        <Field label="Start date">
+          <input className={inputClass} name="startDate" type="date" defaultValue={detailText(details, "startDate")} />
+        </Field>
+        <Field label="Pay type">
+          <select className={inputClass} name="payType" defaultValue={detailText(details, "payType") || (details.salaryNegotiable ? "negotiable" : "per month")}>
+            {payTypes.map((item) => (
+              <option key={item}>{item}</option>
+            ))}
+          </select>
+        </Field>
+        <Field label="Pay amount in ETB">
+          <input className={inputClass} name="payAmount" type="number" min="0" defaultValue={detailText(details, "payAmount") || detailText(details, "salaryAmount")} />
+        </Field>
+        <Field label="Pay min in ETB">
+          <input className={inputClass} name="payMin" type="number" min="0" defaultValue={detailText(details, "payMin")} />
+        </Field>
+        <Field label="Pay max in ETB">
+          <input className={inputClass} name="payMax" type="number" min="0" defaultValue={detailText(details, "payMax")} />
+        </Field>
+        <Field label="Application deadline">
           <input className={inputClass} name="applicationDeadline" type="date" defaultValue={detailText(details, "applicationDeadline")} />
         </Field>
-        <Field label="Skills, separated by commas">
-          <input className={inputClass} name="skills" defaultValue={detailText(details, "skills")} />
+        <Field label="Required skills, separated by commas">
+          <input className={inputClass} name="skills" required defaultValue={detailText(details, "skills")} />
         </Field>
       </>
     );
@@ -334,11 +353,20 @@ function optionalNumber(form: FormData, name: string) {
 
 function buildDetails(type: ListingType, form: FormData) {
   if (type === "job") {
+    const payType = String(form.get("payType") || "negotiable");
+    const payAmount = optionalNumber(form, "payAmount");
     return {
       experienceLevel: form.get("experienceLevel"),
       employmentType: form.get("employmentType"),
-      salaryNegotiable: form.get("salaryNegotiable") === "on",
-      salaryAmount: optionalNumber(form, "salaryAmount"),
+      workersNeeded: optionalNumber(form, "workersNeeded"),
+      duration: String(form.get("duration") || "") || undefined,
+      startDate: String(form.get("startDate") || "") || undefined,
+      payType,
+      payAmount,
+      payMin: optionalNumber(form, "payMin"),
+      payMax: optionalNumber(form, "payMax"),
+      salaryNegotiable: payType === "negotiable",
+      salaryAmount: payAmount,
       currency: "ETB",
       applicationDeadline: String(form.get("applicationDeadline") || "") || undefined,
       skills: skillsOf(form),

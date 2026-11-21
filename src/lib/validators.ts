@@ -62,9 +62,18 @@ const imageUrlField = z
     message: "Image URL must start with http:// or https://",
   });
 
+const payTypes = ["fixed fee", "per day", "per month", "negotiable"] as const;
+
 const jobDetails = z.object({
   experienceLevel: z.enum(experienceLevels),
   employmentType: z.enum(employmentTypes),
+  workersNeeded: z.number().int().positive().optional(),
+  duration: z.string().trim().max(80).optional(),
+  startDate: dateText.optional(),
+  payType: z.enum(payTypes).optional(),
+  payAmount: z.number().nonnegative().optional(),
+  payMin: z.number().nonnegative().optional(),
+  payMax: z.number().nonnegative().optional(),
   salaryNegotiable: z.boolean(),
   salaryAmount: z.number().nonnegative().optional(),
   currency: z.literal("ETB"),
@@ -127,6 +136,7 @@ export const requestWriteSchema = z
     startDate: dateText.optional(),
     endDate: dateText.optional(),
     quantity: z.number().positive().optional(),
+    proposedFee: z.number().nonnegative().optional(),
   })
   .superRefine((value, ctx) => {
     if (value.startDate && value.endDate && value.endDate < value.startDate) {

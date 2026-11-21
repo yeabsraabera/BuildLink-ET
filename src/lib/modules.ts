@@ -72,3 +72,4 @@ export const deliveryOptions = ["pickup", "delivery", "both"] as const;
 export const pricePeriods = ["hourly", "daily", "weekly", "monthly"] as const;
 export const rentalConditions = ["Good", "Fair", "Needs service"] as const;
 export const availabilityValues = ["Available", "Limited", "Busy"] as const;
+export const payTypes = ["fixed fee", "per day", "per month", "negotiable"] as const;

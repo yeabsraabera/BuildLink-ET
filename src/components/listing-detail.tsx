@@ -6,8 +6,10 @@ import { useEffect, useState, type FormEvent } from "react";
 
 import { errorText, readApi } from "@/components/api-client";
 import { detailText, type ListingCard, type RequestCard } from "@/components/listing-types";
+import { ReviewForm } from "@/components/review-form";
 import { StatusBadge } from "@/components/status-badge";
 import { fieldClass, linkClass, outlineClass, primaryClass } from "@/components/ui";
+import { payLabel } from "@/lib/home";
 import { moduleMeta } from "@/lib/modules";
 import { isFinalRequestStatus, listingStatus, requestStatus, type ListingType } from "@/lib/status";
 
@@ -101,6 +103,7 @@ export function ListingDetail({ type, id }: { type: ListingType; id: string }) {
     setPending(true);
     const form = new FormData(event.currentTarget);
     const quantity = String(form.get("quantity") || "").trim();
+    const proposedFee = String(form.get("proposedFee") || "").trim();
     try {
       const response = await fetch("/api/requests", {
         method: "POST",
@@ -112,6 +115,7 @@ export function ListingDetail({ type, id }: { type: ListingType; id: string }) {
           startDate: String(form.get("startDate") || "") || undefined,
           endDate: String(form.get("endDate") || "") || undefined,
           quantity: quantity ? Number(quantity) : undefined,
+          proposedFee: proposedFee ? Number(proposedFee) : undefined,
         }),
       });
       const body = await readApi<RequestCard>(response);
@@ -282,6 +286,7 @@ export function ListingDetail({ type, id }: { type: ListingType; id: string }) {
                       <StatusBadge status={item.status} />
                     </p>
                     <p className="mt-1 break-words text-sm">{item.message}</p>
+                    {item.proposedFee ? <p className="mt-1 text-sm text-muted">Proposed fee: {item.proposedFee} ETB</p> : null}
                     <div className="mt-2 flex flex-wrap gap-2">
                       {!isFinalRequestStatus(type, item.status)
                         ? requestStatus[type].ownerSets.map((status) => (
@@ -291,6 +296,9 @@ export function ListingDetail({ type, id }: { type: ListingType; id: string }) {
                           ))
                         : null}
                     </div>
+                    {type === "job" && item.status === "Accepted" && item.from.id ? (
+                      <ReviewForm revieweeId={item.from.id} listingId={id} />
+                    ) : null}
                   </li>
                 ))}
               </ul>
@@ -300,7 +308,13 @@ export function ListingDetail({ type, id }: { type: ListingType; id: string }) {
               <h2 className="text-xl">{meta.request}</h2>
               {signedIn ? (
                 <form onSubmit={sendRequest} className="mt-3 grid gap-3">
-                  <textarea className={inputClass} name="message" required minLength={2} rows={4} placeholder="Your message" />
+                  <textarea className={inputClass} name="message" required minLength={2} rows={4} placeholder={type === "job" ? "Cover message" : "Your message"} />
+                  {type === "job" ? (
+                    <label className="grid min-w-0 gap-1 text-sm">
+                      Proposed fee in ETB (optional)
+                      <input className={inputClass} type="number" min="0" name="proposedFee" />
+                    </label>
+                  ) : null}
                   {type === "rental" ? (
                     <div className="grid gap-3 sm:grid-cols-2">
                       <label className="grid min-w-0 gap-1 text-sm">
@@ -363,12 +377,12 @@ function Facts({ type, listing }: { type: ListingType; listing: ListingCard }) {
 function factRows(type: ListingType, details: Record<string, unknown>) {
   if (type === "job") {
     return [
-      { label: "Experience", value: detailText(details, "experienceLevel") },
+      { label: "Need", value: detailText(details, "experienceLevel") },
       { label: "Employment", value: detailText(details, "employmentType") },
-      {
-        label: "Salary",
-        value: details.salaryNegotiable ? "Negotiable" : `${detailText(details, "salaryAmount")} ETB`,
-      },
+      { label: "Workers needed", value: detailText(details, "workersNeeded") || "1" },
+      { label: "Duration", value: detailText(details, "duration") || "Not listed" },
+      { label: "Start date", value: detailText(details, "startDate") || "Flexible" },
+      { label: "Pay", value: payLabel(details) },
       { label: "Deadline", value: detailText(details, "applicationDeadline") || "None" },
       { label: "Skills", value: detailText(details, "skills") || "None listed" },
     ];

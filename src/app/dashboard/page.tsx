@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import { errorText, readApi } from "@/components/api-client";
 import type { ListingCard, RequestCard } from "@/components/listing-types";
+import { ReviewForm } from "@/components/review-form";
 import { StatusBadge } from "@/components/status-badge";
 import { linkClass, moduleEmoji, outlineClass, pageClass, primaryClass } from "@/components/ui";
 import { moduleMeta } from "@/lib/modules";
@@ -234,6 +235,13 @@ function RequestRow({ item, onStatus }: { item: RequestCard; onStatus: (id: stri
         )}
       </p>
       <p className="mt-1 break-words text-sm text-muted">{item.message}</p>
+      {item.proposedFee ? <p className="mt-1 text-sm text-muted">Proposed fee: {item.proposedFee} ETB</p> : null}
+      {item.status === "Accepted" && type === "job" ? (
+        <ReviewForm
+          revieweeId={item.viewer === "from" ? item.to.id : item.from.id}
+          listingId={item.listing.id}
+        />
+      ) : null}
       {!isFinalRequestStatus(type, item.status) ? (
         <div className="mt-3 flex flex-wrap gap-2">
           {item.viewer === "from" ? (
