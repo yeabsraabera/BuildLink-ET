@@ -1,6 +1,5 @@
-import { ListingDetail } from "@/components/listing-detail";
+import { ListingDetailRoute } from "@/components/listing-route";
 
-export default async function ProfessionalDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  return <ListingDetail type="professional" id={id} />;
+export default function ProfessionalDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  return <ListingDetailRoute type="professional" params={params} />;
 }

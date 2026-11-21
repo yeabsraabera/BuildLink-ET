@@ -1,6 +1,5 @@
-import { ListingForm } from "@/components/listing-form";
+import { ListingEditRoute } from "@/components/listing-route";
 
-export default async function EditRentalPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  return <ListingForm type="rental" mode="edit" id={id} />;
+export default function EditRentalPage({ params }: { params: Promise<{ id: string }> }) {
+  return <ListingEditRoute type="rental" params={params} />;
 }

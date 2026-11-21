@@ -1,6 +1,5 @@
-import { ListingDetail } from "@/components/listing-detail";
+import { ListingDetailRoute } from "@/components/listing-route";
 
-export default async function RentalDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  return <ListingDetail type="rental" id={id} />;
+export default function RentalDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  return <ListingDetailRoute type="rental" params={params} />;
 }

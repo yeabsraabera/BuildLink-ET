@@ -1,6 +1,5 @@
-import { ListingForm } from "@/components/listing-form";
+import { ListingEditRoute } from "@/components/listing-route";
 
-export default async function EditJobPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  return <ListingForm type="job" mode="edit" id={id} />;
+export default function EditJobPage({ params }: { params: Promise<{ id: string }> }) {
+  return <ListingEditRoute type="job" params={params} />;
 }
