@@ -13,14 +13,25 @@ Next.js App Router, TypeScript, Tailwind, Route Handlers only (no Express), Mong
 - ONE `Listing` model and ONE `/api/listings?type=job|material|rental|professional`. Type-specific fields live in `details`, validated by a zod discriminated union on `type`.
 - ONE `Request` model and ONE `/api/requests` (type, listing, from, to, message, startDate?, endDate?, quantity?, status). Support `?box=incoming|outgoing`. Listings support `?mine=true`.
 - Per-type status rules live in one config map (`src/lib/status.ts`), not scattered if/else.
-- User, Report, AdminLog, Location models. Locations are configurable (seed: Jimma, Agaro, Bedele, Mettu, Bonga).
+- User, Review, Report, AdminLog, Location models. Locations are configurable (seed: Jimma, Agaro, Bedele, Mettu, Bonga).
 - Shared helpers: `lib/db.ts`, `lib/auth.ts`, `lib/api.ts` (response helpers), `lib/validators.ts`. Reuse them everywhere.
 - API format: `{success:true,message,data}` or `{success:false,message,errors?}`. Use status codes 200/201/400/401/403/404/409.
 - Browse supports `q`, `category`, `location`, `page`, `limit`.
 
+## Auth gate
+- Public pages: `/`, `/login`, `/register` only. Next.js middleware verifies the JWT cookie and redirects every other page to `/login?next=<path>`.
+- Public APIs: `/api/auth/*`, `/api/locations`, `/api/stats`. Every other API returns 401 without a session.
+- After login or register, redirect to `?next` or `/dashboard`.
+- Never show seed emails or passwords in the UI.
+
 ## Status flows
 - Listing: job Open/Closed/Filled; material Available/Reserved/Sold; rental Available/Paused; professional Active/Paused; any Removed. Hide Sold/Closed/Filled/Paused/Removed from public browse.
 - Request: job Submitted→Under review→Shortlisted→Interview requested→Accepted/Rejected; material New→Responded→Negotiating→Agreed/Declined→Completed (Agreed makes listing Reserved, Completed makes it Sold); professional New→Responded→Accepted/Declined; rental Requested→Approved/Rejected→Returned. Requester may Withdraw any non-final request.
+
+## Profiles and reviews
+- User profiles include role (`contractor` | `employer` | `both`), headline, bio, town, skills, experience entries, and an avatar URL. Pages: `/profile/[userId]` and `/profile/edit`.
+- Reviews: rating 1-5. You may only review someone after an Accepted job application between you, only once per relationship, and never yourself. Reject otherwise with 403.
+- Public owner and profile views show name and town (plus public profile fields). Never expose email or passwordHash.
 
 ## Server-enforced rules
 - Only the owner edits, deletes or changes status of a listing. PATCH whitelists fields (never owner, never verification, never arbitrary status).
@@ -29,17 +40,16 @@ Next.js App Router, TypeScript, Tailwind, Route Handlers only (no Express), Mong
 - Rental approval returns 409 if another Approved request for the same listing overlaps. endDate must be on or after startDate.
 - Professional verification: owner can only set `pending`; only admin sets `verified` or `rejected`.
 - Every admin route checks isAdmin on the server and writes an AdminLog entry. Admin reports resolve at `api/admin/reports/[id]/route.ts`.
-- Public responses populate owner with ONLY name and town. Never expose email or passwordHash.
-- Also needed: `GET /api/auth/me`, `GET /api/locations`, `POST /api/admin/locations`, `GET /api/admin/stats`.
+- Also needed: `GET /api/auth/me`, `GET /api/locations`, `GET /api/stats`, `POST /api/admin/locations`, `GET /api/admin/stats`.
 
 ## UI
-Responsive, warm earthy palette (terracotta accent), shared navbar, loading/empty/error states, light and dark mode. Pages: `/`, `/login`, `/register`, `/jobs`, `/materials`, `/rentals`, `/professionals`, a detail page per module with the apply/inquiry/request form, `/dashboard`, `/admin`.
+Responsive construction-company landing on `/`. Signed-in app pages: `/jobs`, `/materials`, `/rentals`, `/professionals`, a detail page per module with the apply/inquiry/request form, `/dashboard`, `/admin`, `/profile/[userId]`. Shared navbar, loading/empty/error states, light and dark mode.
 
 ## Honesty
 No fake payments, escrow, insurance or official verification. Footer says this is a prototype. Material pages say BuildLink ET has not inspected items. Never show private contact details.
 
 ## OUT OF SCOPE (do not add, tell me instead)
-Reviews, favorites, maps, AI features, email/SMS, file uploads, chat, payments, multi-language, tests beyond a few key API checks.
+Favorites, maps, AI features, email/SMS, file uploads, chat, payments, multi-language, tests beyond a few key API checks.
 
 ## Working style
 Build in phases and stop after each. The app must stay runnable after every phase. Keep code simple and readable. If tempted to add something not listed, skip it and mention it.
