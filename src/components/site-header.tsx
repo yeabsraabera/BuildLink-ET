@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { ThemeToggle } from "@/components/theme-toggle";
-import { linkClass, outlineClass, primaryClass } from "@/components/ui";
 
 const modules = [
   { href: "/jobs", label: "Jobs" },
@@ -15,6 +14,7 @@ const modules = [
 ] as const;
 
 type Session = {
+  id?: string;
   name: string;
   town: string;
   isAdmin: boolean;
@@ -59,15 +59,23 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="border-b border-line bg-card">
+    <header className="bg-navy text-white">
       <div className="mx-auto flex min-w-0 max-w-6xl items-center gap-2 px-4 py-3">
-        <Link href="/" className="shrink-0 text-base text-foreground">
+        <Link href="/" className="shrink-0 text-base">
           BuildLink ET
         </Link>
-        <nav className="ml-4 hidden min-w-0 items-center gap-1 md:flex" aria-label="Modules">
+        <nav className="ml-4 hidden min-w-0 items-center gap-1 md:flex" aria-label="Site">
+          <NavLink href="/" pathname={pathname} label="Home" exact />
           {modules.map((item) => (
-            <NavLink key={item.href} href={item.href} pathname={pathname} label={item.label} />
+            <NavLink
+              key={item.href}
+              href={session ? item.href : `/login?next=${item.href}`}
+              pathname={pathname}
+              label={item.label}
+              match={item.href}
+            />
           ))}
+          <NavLink href="/#how-it-works" pathname={pathname} label="How it works" />
         </nav>
         <div className="ml-auto flex shrink-0 items-center gap-2">
           <ThemeToggle />
@@ -76,24 +84,32 @@ export function SiteHeader() {
           </div>
           <button
             type="button"
-            className="inline-flex h-10 w-10 flex-col items-center justify-center gap-1 rounded-xl border border-line bg-card md:hidden"
+            className="inline-flex h-10 w-10 flex-col items-center justify-center gap-1 rounded-xl border border-white/40 md:hidden"
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label="Menu"
             onClick={() => setOpenPath(open ? null : pathname)}
           >
-            <span className="block h-0.5 w-4 bg-foreground" />
-            <span className="block h-0.5 w-4 bg-foreground" />
-            <span className="block h-0.5 w-4 bg-foreground" />
+            <span className="block h-0.5 w-4 bg-white" />
+            <span className="block h-0.5 w-4 bg-white" />
+            <span className="block h-0.5 w-4 bg-white" />
           </button>
         </div>
       </div>
       {open ? (
-        <div id="mobile-nav" className="border-t border-line bg-card px-4 py-3 md:hidden">
-          <nav className="grid gap-1" aria-label="Modules">
+        <div id="mobile-nav" className="border-t border-white/20 px-4 py-3 md:hidden">
+          <nav className="grid gap-1" aria-label="Site">
+            <NavLink href="/" pathname={pathname} label="Home" exact />
             {modules.map((item) => (
-              <NavLink key={item.href} href={item.href} pathname={pathname} label={item.label} />
+              <NavLink
+                key={item.href}
+                href={session ? item.href : `/login?next=${item.href}`}
+                pathname={pathname}
+                label={item.label}
+                match={item.href}
+              />
             ))}
+            <NavLink href="/#how-it-works" pathname={pathname} label="How it works" />
           </nav>
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <AuthLinks ready={ready} session={session} pathname={pathname} onLogout={logout} />
@@ -108,19 +124,22 @@ function NavLink({
   href,
   label,
   pathname,
+  exact,
+  match,
 }: {
-  href: "/jobs" | "/materials" | "/rentals" | "/professionals";
+  href: string;
   label: string;
   pathname: string;
+  exact?: boolean;
+  match?: string;
 }) {
-  const active = pathname === href || pathname.startsWith(`${href}/`);
+  const target = match ?? href;
+  const active = exact ? pathname === target : pathname === target || pathname.startsWith(`${target}/`);
   return (
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className={`rounded-full px-3 py-1 text-sm ${
-        active ? "bg-accent text-accent-ink" : "text-foreground hover:bg-background"
-      }`}
+      className={`rounded-full px-3 py-1 text-sm ${active ? "bg-accent text-accent-ink" : "text-white hover:bg-white/10"}`}
     >
       {label}
     </Link>
@@ -139,7 +158,7 @@ function AuthLinks({
   onLogout: () => void;
 }) {
   if (!ready) {
-    return <span className="text-sm text-muted">Account</span>;
+    return <span className="text-sm text-white/70">Account</span>;
   }
 
   if (!session) {
@@ -148,12 +167,12 @@ function AuthLinks({
         <Link
           href="/login"
           aria-current={pathname === "/login" ? "page" : undefined}
-          className={`px-2 py-1 text-sm ${linkClass}`}
+          className="inline-flex rounded-xl border border-white px-4 py-2 text-sm text-white"
         >
-          Login
+          Log in
         </Link>
-        <Link href="/register" className={primaryClass}>
-          Register
+        <Link href="/register" className="inline-flex rounded-xl bg-accent px-4 py-2 text-sm text-accent-ink">
+          Sign up
         </Link>
       </>
     );
@@ -161,18 +180,22 @@ function AuthLinks({
 
   return (
     <>
-      <span className="max-w-40 truncate text-sm text-muted">
-        {session.name}, {session.town}
-      </span>
-      <Link href="/dashboard" className={`px-2 py-1 text-sm ${linkClass}`}>
+      <Link href={session.id ? `/profile/${session.id}` : "/dashboard"} className="max-w-40 truncate text-sm text-white/80">
+        {session.name}
+      </Link>
+      <Link href="/dashboard" className="px-2 py-1 text-sm text-white">
         Dashboard
       </Link>
       {session.isAdmin ? (
-        <Link href="/admin" className={`px-2 py-1 text-sm ${linkClass}`}>
+        <Link href="/admin" className="px-2 py-1 text-sm text-white">
           Admin
         </Link>
       ) : null}
-      <button type="button" onClick={onLogout} className={outlineClass}>
+      <button
+        type="button"
+        onClick={onLogout}
+        className="inline-flex rounded-xl border border-white px-4 py-2 text-sm text-white"
+      >
         Logout
       </button>
     </>

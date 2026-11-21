@@ -9,9 +9,11 @@
   --foreground: #211d18;
   --muted: #6f675b;
   --line: #e6dccb;
-  --accent: #c2410c;
-  --accent-hover: #9a3410;
-  --accent-ink: #ffffff;
+  --accent: #f5b700;
+  --accent-hover: #d9a000;
+  --accent-ink: #0f2a3d;
+  --navy: #0f2a3d;
+  --page: #f7f8fa;
   --success: #1d6b3a;
   --success-bg: #e7f5ec;
   --danger: #9f2d2d;
@@ -25,9 +27,11 @@
   --foreground: #f4efe8;
   --muted: #c4b8a8;
   --line: #3d352c;
-  --accent: #c2410c;
-  --accent-hover: #a3350b;
-  --accent-ink: #ffffff;
+  --accent: #f5b700;
+  --accent-hover: #d9a000;
+  --accent-ink: #0f2a3d;
+  --navy: #0c2230;
+  --page: #141210;
   --success: #b7e0c4;
   --success-bg: #1c3326;
   --danger: #f0c2bc;
@@ -44,6 +48,8 @@
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-accent-ink: var(--accent-ink);
+  --color-navy: var(--navy);
+  --color-page: var(--page);
   --color-success: var(--success);
   --color-success-bg: var(--success-bg);
   --color-danger: var(--danger);
@@ -71,4 +77,17 @@ input,
 select,
 textarea {
   font-weight: inherit;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fade-in 0.45s ease;
 }

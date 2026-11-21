@@ -31,7 +31,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full min-w-0 flex-col overflow-x-clip font-sans">
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-        <Suspense fallback={<div className="h-14 border-b border-line bg-card" />}>
+        <Suspense fallback={<div className="h-14 bg-navy" />}>
           <SiteHeader />
         </Suspense>
         <main className="flex-1">{children}</main>

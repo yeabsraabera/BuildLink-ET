@@ -2,8 +2,6 @@
 
 import { useSyncExternalStore } from "react";
 
-import { outlineClass } from "@/components/ui";
-
 const STORAGE_KEY = "buildlink-theme";
 const THEME_EVENT = "buildlink-theme-change";
 
@@ -31,7 +29,7 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
-      className={outlineClass}
+      className="inline-flex rounded-xl border border-white/40 px-3 py-1.5 text-sm text-white"
     >
       {dark ? "Light" : "Dark"}
     </button>

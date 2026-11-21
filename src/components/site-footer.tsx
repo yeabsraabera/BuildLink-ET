@@ -1,11 +1,35 @@
+import Link from "next/link";
+
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-line">
-      <div className="mx-auto max-w-6xl px-4 py-6 text-sm leading-6 text-muted">
-        <p>BuildLink ET</p>
-        <p className="mt-2">
-          BuildLink ET is a prototype for Southwest Ethiopia. It does not take payments, hold
-          escrow, insure equipment, or officially verify people, materials, or equipment.
+    <footer className="bg-navy text-white">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:grid-cols-3">
+        <div>
+          <p>BuildLink ET</p>
+          <p className="mt-2 text-sm leading-6 text-white/75">
+            Construction jobs, contractors, surplus materials, and equipment rentals in Southwest Ethiopia.
+          </p>
+        </div>
+        <div className="grid gap-2 text-sm">
+          <Link href="/" className="hover:text-accent">
+            Home
+          </Link>
+          <Link href="/jobs" className="hover:text-accent">
+            Jobs
+          </Link>
+          <Link href="/materials" className="hover:text-accent">
+            Materials
+          </Link>
+          <Link href="/rentals" className="hover:text-accent">
+            Rentals
+          </Link>
+          <Link href="/professionals" className="hover:text-accent">
+            Professionals
+          </Link>
+        </div>
+        <p className="text-sm leading-6 text-white/75">
+          BuildLink ET is a prototype. It does not take payments, hold escrow, insure equipment, or officially
+          verify people, materials, or equipment.
         </p>
       </div>
     </footer>
