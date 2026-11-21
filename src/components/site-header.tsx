@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { ThemeToggle } from "@/components/theme-toggle";
+import { linkClass, outlineClass, primaryClass } from "@/components/ui";
 
 const modules = [
   { href: "/jobs", label: "Jobs" },
@@ -58,35 +59,37 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="border-b border-line bg-surface">
-      <div className="h-1 bg-accent" />
-      <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-3">
-        <Link href="/" className="font-display text-xl text-foreground">
+    <header className="border-b border-line bg-card">
+      <div className="mx-auto flex min-w-0 max-w-6xl items-center gap-2 px-4 py-3">
+        <Link href="/" className="shrink-0 text-base text-foreground">
           BuildLink ET
         </Link>
-        <nav className="ml-4 hidden items-center gap-1 md:flex" aria-label="Modules">
+        <nav className="ml-4 hidden min-w-0 items-center gap-1 md:flex" aria-label="Modules">
           {modules.map((item) => (
             <NavLink key={item.href} href={item.href} pathname={pathname} label={item.label} />
           ))}
         </nav>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex shrink-0 items-center gap-2">
           <ThemeToggle />
           <div className="hidden items-center gap-2 md:flex">
             <AuthLinks ready={ready} session={session} pathname={pathname} onLogout={logout} />
           </div>
           <button
             type="button"
-            className="rounded-md border border-line px-3 py-1.5 text-sm md:hidden"
+            className="inline-flex h-10 w-10 flex-col items-center justify-center gap-1 rounded-xl border border-line bg-card md:hidden"
             aria-expanded={open}
             aria-controls="mobile-nav"
+            aria-label="Menu"
             onClick={() => setOpenPath(open ? null : pathname)}
           >
-            Menu
+            <span className="block h-0.5 w-4 bg-foreground" />
+            <span className="block h-0.5 w-4 bg-foreground" />
+            <span className="block h-0.5 w-4 bg-foreground" />
           </button>
         </div>
       </div>
       {open ? (
-        <div id="mobile-nav" className="border-t border-line bg-background px-4 py-3 md:hidden">
+        <div id="mobile-nav" className="border-t border-line bg-card px-4 py-3 md:hidden">
           <nav className="grid gap-1" aria-label="Modules">
             {modules.map((item) => (
               <NavLink key={item.href} href={item.href} pathname={pathname} label={item.label} />
@@ -115,7 +118,7 @@ function NavLink({
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className={`rounded-md px-2 py-1 text-sm ${
+      className={`rounded-full px-3 py-1 text-sm ${
         active ? "bg-accent text-accent-ink" : "text-foreground hover:bg-background"
       }`}
     >
@@ -145,14 +148,11 @@ function AuthLinks({
         <Link
           href="/login"
           aria-current={pathname === "/login" ? "page" : undefined}
-          className="px-2 py-1 text-sm text-foreground"
+          className={`px-2 py-1 text-sm ${linkClass}`}
         >
           Login
         </Link>
-        <Link
-          href="/register"
-          className="rounded-md bg-accent px-3 py-1.5 text-sm text-accent-ink hover:bg-accent-hover"
-        >
+        <Link href="/register" className={primaryClass}>
           Register
         </Link>
       </>
@@ -164,19 +164,15 @@ function AuthLinks({
       <span className="max-w-40 truncate text-sm text-muted">
         {session.name}, {session.town}
       </span>
-      <Link href="/dashboard" className="px-2 py-1 text-sm text-foreground">
+      <Link href="/dashboard" className={`px-2 py-1 text-sm ${linkClass}`}>
         Dashboard
       </Link>
       {session.isAdmin ? (
-        <Link href="/admin" className="px-2 py-1 text-sm text-foreground">
+        <Link href="/admin" className={`px-2 py-1 text-sm ${linkClass}`}>
           Admin
         </Link>
       ) : null}
-      <button
-        type="button"
-        onClick={onLogout}
-        className="rounded-md border border-line px-3 py-1.5 text-sm text-foreground hover:border-accent"
-      >
+      <button type="button" onClick={onLogout} className={outlineClass}>
         Logout
       </button>
     </>

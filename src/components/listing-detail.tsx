@@ -6,11 +6,12 @@ import { useEffect, useState, type FormEvent } from "react";
 
 import { errorText, readApi } from "@/components/api-client";
 import { detailText, type ListingCard, type RequestCard } from "@/components/listing-types";
+import { StatusBadge } from "@/components/status-badge";
+import { fieldClass, linkClass, outlineClass, primaryClass } from "@/components/ui";
 import { moduleMeta } from "@/lib/modules";
 import { isFinalRequestStatus, listingStatus, requestStatus, type ListingType } from "@/lib/status";
 
-const inputClass =
-  "w-full rounded-md border border-line bg-background px-3 py-2 text-foreground outline-none focus:border-accent";
+const inputClass = fieldClass;
 
 export function ListingDetail({ type, id }: { type: ListingType; id: string }) {
   const meta = moduleMeta[type];
@@ -174,22 +175,31 @@ export function ListingDetail({ type, id }: { type: ListingType; id: string }) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-8">
-      <Link href={meta.path} className="text-sm font-semibold text-accent">
+    <div className="mx-auto w-full min-w-0 max-w-3xl px-4 py-8">
+      <Link href={meta.path} className={`text-sm ${linkClass}`}>
         Back to {meta.title.toLowerCase()}
       </Link>
-      {state === "loading" ? <p className="mt-6 text-muted">Loading...</p> : null}
+      {state === "loading" ? (
+        <div className="mt-6" aria-busy="true">
+          <div className="h-4 w-40 rounded-md bg-card" />
+          <div className="mt-3 h-8 w-2/3 rounded-md bg-card" />
+          <p className="sr-only">Loading...</p>
+        </div>
+      ) : null}
       {state === "error" ? (
-        <p className="mt-6 rounded-md bg-danger-bg px-3 py-2 text-danger" role="alert">
+        <p className="mt-6 rounded-xl bg-danger-bg px-3 py-2 text-sm text-danger" role="alert">
           {message}
         </p>
       ) : null}
       {state === "ready" && listing ? (
-        <article className="mt-4">
-          <p className="text-sm text-muted">
-            {listing.category} · {listing.location.name} · {listing.status}
-          </p>
-          <h1 className="mt-1 font-display text-4xl">{listing.title}</h1>
+        <article className="mt-4 min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-sm text-muted">
+              {listing.category} · {listing.location.name}
+            </p>
+            <StatusBadge status={listing.status} />
+          </div>
+          <h1 className="mt-2 break-words text-3xl leading-tight">{listing.title}</h1>
           <p className="mt-2 text-sm text-muted">
             {listing.owner.name}, {listing.owner.town}
           </p>
@@ -207,68 +217,61 @@ export function ListingDetail({ type, id }: { type: ListingType; id: string }) {
           </dl>
           {type === "rental" ? (
             <section className="mt-6">
-              <h2 className="font-display text-2xl">Confirmed bookings</h2>
+              <h2 className="text-xl">Confirmed bookings</h2>
               {listing.bookings && listing.bookings.length > 0 ? (
                 <ul className="mt-2 grid gap-2">
                   {listing.bookings.map((booking) => (
-                    <li key={`${booking.startDate}-${booking.endDate}`} className="rounded-md border border-line px-3 py-2 text-sm">
+                    <li key={`${booking.startDate}-${booking.endDate}`} className="rounded-xl border border-line bg-card px-3 py-2 text-sm">
                       {booking.startDate} to {booking.endDate}
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="mt-2 text-sm text-muted">No confirmed bookings yet.</p>
+                <p className="mt-2 text-sm text-muted">No confirmed bookings yet. Open dates can still be requested.</p>
               )}
             </section>
           ) : null}
 
           {listing.isOwner ? (
-            <section className="mt-6 rounded-lg border border-line bg-surface p-4">
-              <h2 className="font-display text-2xl">Owner controls</h2>
+            <section className="mt-6 rounded-xl border border-line bg-card p-4">
+              <h2 className="text-xl">Owner controls</h2>
               <div className="mt-3 flex flex-wrap gap-2">
-                <Link href={`${meta.path}/${listing.id}/edit`} className="rounded-md border border-line px-3 py-1.5 text-sm font-semibold">
+                <Link href={`${meta.path}/${listing.id}/edit`} className={outlineClass}>
                   Edit
                 </Link>
-                <button type="button" onClick={removeListing} className="rounded-md border border-line px-3 py-1.5 text-sm font-semibold">
+                <button type="button" onClick={removeListing} className={outlineClass}>
                   Delete
                 </button>
                 {listingStatus[type].values
                   .filter((status) => status !== listing.status)
                   .map((status) => (
-                    <button
-                      key={status}
-                      type="button"
-                      onClick={() => updateListingStatus(status)}
-                      className="rounded-md bg-accent px-3 py-1.5 text-sm font-semibold text-accent-ink"
-                    >
+                    <button key={status} type="button" onClick={() => updateListingStatus(status)} className={outlineClass}>
                       {status}
                     </button>
                   ))}
                 {type === "professional" && listing.verification !== "pending" && listing.verification !== "verified" ? (
-                  <button type="button" onClick={requestVerification} className="rounded-md border border-line px-3 py-1.5 text-sm font-semibold">
+                  <button type="button" onClick={requestVerification} className={outlineClass}>
                     Request verification
                   </button>
                 ) : null}
               </div>
-              <h3 className="mt-5 font-semibold">Incoming for this listing</h3>
-              {incoming.length === 0 ? <p className="mt-2 text-sm text-muted">None yet.</p> : null}
-              <ul className="mt-2 grid gap-3">
+              <h3 className="mt-5 border-t border-line pt-4 text-base">Incoming for this listing</h3>
+              {incoming.length === 0 ? <p className="mt-2 text-sm text-muted">No one has written in yet.</p> : null}
+              <ul className="mt-2">
                 {incoming.map((item) => (
-                  <li key={item.id} className="rounded-md border border-line p-3">
-                    <p className="text-sm text-muted">
-                      {item.from.name}, {item.from.town} · {item.status}
-                      {item.startDate ? ` · ${item.startDate} to ${item.endDate}` : ""}
+                  <li key={item.id} className="border-t border-line py-3">
+                    <p className="flex flex-wrap items-center gap-2 text-sm text-muted">
+                      <span>
+                        {item.from.name}, {item.from.town}
+                        {item.startDate ? ` · ${item.startDate} to ${item.endDate}` : ""}
+                      </span>
+                      <StatusBadge status={item.status} />
                     </p>
-                    <p className="mt-1 text-sm">{item.message}</p>
+                    <p className="mt-1 break-words text-sm">{item.message}</p>
                     <div className="mt-2 flex flex-wrap gap-2">
                       {!isFinalRequestStatus(type, item.status)
                         ? requestStatus[type].ownerSets.map((status) => (
-                            <button
-                              key={status}
-                              type="button"
-                              onClick={() => updateRequest(item.id, status)}
-                              className="rounded-md border border-line px-2 py-1 text-sm"
-                            >
+                            <button key={status} type="button" onClick={() => updateRequest(item.id, status)} className={outlineClass}>
                               {status}
                             </button>
                           ))
@@ -279,36 +282,36 @@ export function ListingDetail({ type, id }: { type: ListingType; id: string }) {
               </ul>
             </section>
           ) : (
-            <section className="mt-6 rounded-lg border border-line bg-surface p-4">
-              <h2 className="font-display text-2xl">{meta.request}</h2>
+            <section className="mt-6 rounded-xl border border-line bg-card p-4">
+              <h2 className="text-xl">{meta.request}</h2>
               {signedIn ? (
                 <form onSubmit={sendRequest} className="mt-3 grid gap-3">
                   <textarea className={inputClass} name="message" required minLength={2} rows={4} placeholder="Your message" />
                   {type === "rental" ? (
                     <div className="grid gap-3 sm:grid-cols-2">
-                      <label className="grid gap-1 text-sm font-semibold">
+                      <label className="grid min-w-0 gap-1 text-sm">
                         Start
                         <input className={inputClass} type="date" name="startDate" required />
                       </label>
-                      <label className="grid gap-1 text-sm font-semibold">
+                      <label className="grid min-w-0 gap-1 text-sm">
                         End
                         <input className={inputClass} type="date" name="endDate" required />
                       </label>
                     </div>
                   ) : null}
                   {type === "material" ? (
-                    <label className="grid gap-1 text-sm font-semibold">
+                    <label className="grid min-w-0 gap-1 text-sm">
                       Quantity (optional)
                       <input className={inputClass} type="number" min="0.01" step="any" name="quantity" />
                     </label>
                   ) : null}
-                  <button type="submit" disabled={pending} className="rounded-md bg-accent px-4 py-2 font-semibold text-accent-ink disabled:opacity-60">
+                  <button type="submit" disabled={pending} className={primaryClass}>
                     {pending ? "Sending..." : meta.request}
                   </button>
                 </form>
               ) : (
                 <p className="mt-2 text-sm">
-                  <Link href="/login" className="font-semibold text-accent">
+                  <Link href="/login" className={linkClass}>
                     Log in
                   </Link>{" "}
                   to continue. Private contact details stay hidden.
@@ -319,14 +322,14 @@ export function ListingDetail({ type, id }: { type: ListingType; id: string }) {
 
           {signedIn && !listing.isOwner ? (
             <form onSubmit={report} className="mt-6 grid gap-2">
-              <h2 className="font-semibold">Report this listing</h2>
+              <h2 className="text-base">Report this listing</h2>
               <textarea className={inputClass} name="reason" required minLength={5} rows={3} placeholder="What is wrong?" />
-              <button type="submit" className="w-fit rounded-md border border-line px-3 py-1.5 text-sm font-semibold">
+              <button type="submit" className={`${outlineClass} w-fit`}>
                 Report
               </button>
             </form>
           ) : null}
-          {notice ? <p className="mt-4 rounded-md border border-line bg-surface px-3 py-2 text-sm">{notice}</p> : null}
+          {notice ? <p className="mt-4 break-words rounded-xl border border-line bg-card px-3 py-2 text-sm">{notice}</p> : null}
         </article>
       ) : null}
     </div>

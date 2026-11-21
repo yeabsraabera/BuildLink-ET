@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
-const inputClass =
-  "w-full rounded-md border border-line bg-background px-3 py-2 text-foreground outline-none focus:border-accent";
+import { fieldClass, linkClass, primaryClass } from "@/components/ui";
+
+const inputClass = fieldClass;
 
 type ApiBody = {
   success: boolean;
@@ -49,15 +50,15 @@ export function LoginForm() {
   return (
     <form onSubmit={onSubmit} className="grid gap-4" noValidate>
       {error ? (
-        <p role="alert" className="rounded-md bg-danger-bg px-3 py-2 text-sm text-danger">
+        <p role="alert" className="rounded-xl bg-danger-bg px-3 py-2 text-sm text-danger">
           {error}
         </p>
       ) : null}
-      <label className="grid gap-1 text-sm">
+      <label className="grid min-w-0 gap-1 text-sm">
         Email
         <input className={inputClass} name="email" type="email" autoComplete="email" required />
       </label>
-      <label className="grid gap-1 text-sm">
+      <label className="grid min-w-0 gap-1 text-sm">
         Password
         <input
           className={inputClass}
@@ -70,13 +71,13 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={pending}
-        className="rounded-md bg-accent px-4 py-2 text-accent-ink hover:bg-accent-hover disabled:opacity-60"
+        className={primaryClass}
       >
         {pending ? "Logging in..." : "Login"}
       </button>
       <p className="text-sm text-muted">
         New here?{" "}
-        <Link href="/register" className="text-accent">
+        <Link href="/register" className={linkClass}>
           Create an account
         </Link>
       </p>

@@ -6,6 +6,7 @@ import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
 import { errorText, readApi } from "@/components/api-client";
 import { detailText, type ListingCard, type LocationOption } from "@/components/listing-types";
+import { fieldClass, linkClass, primaryClass } from "@/components/ui";
 import {
   availabilityValues,
   deliveryOptions,
@@ -18,8 +19,7 @@ import {
 } from "@/lib/modules";
 import type { ListingType } from "@/lib/status";
 
-const inputClass =
-  "w-full rounded-md border border-line bg-background px-3 py-2 text-foreground outline-none focus:border-accent";
+const inputClass = fieldClass;
 
 export function ListingForm({ type, mode, id }: { type: ListingType; mode: "create" | "edit"; id?: string }) {
   const meta = moduleMeta[type];
@@ -123,20 +123,20 @@ export function ListingForm({ type, mode, id }: { type: ListingType; mode: "crea
   const categories = listing && !meta.categories.includes(listing.category) ? [listing.category, ...meta.categories] : meta.categories;
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-4 py-8">
-      <Link href={meta.path} className="text-sm font-semibold text-accent">
+    <div className="mx-auto w-full min-w-0 max-w-2xl px-4 py-8">
+      <Link href={meta.path} className={`text-sm ${linkClass}`}>
         Back to {meta.title.toLowerCase()}
       </Link>
-      <h1 className="mt-3 font-display text-3xl">{mode === "edit" ? "Edit listing" : meta.post}</h1>
+      <h1 className="mt-3 text-2xl">{mode === "edit" ? "Edit listing" : meta.post}</h1>
       {type === "material" ? (
         <p className="mt-2 text-sm text-muted">BuildLink ET has not inspected items. Describe the condition honestly.</p>
       ) : null}
       {state === "loading" ? <p className="mt-6 text-muted">Loading form...</p> : null}
       {state === "error" ? (
-        <p className="mt-6 rounded-md bg-danger-bg px-3 py-2 text-danger" role="alert">
+        <p className="mt-6 rounded-xl bg-danger-bg px-3 py-2 text-sm text-danger" role="alert">
           {message}{" "}
           {message.startsWith("Sign in") ? (
-            <Link href="/login" className="font-semibold underline">
+            <Link href="/login" className={linkClass}>
               Log in
             </Link>
           ) : null}
@@ -179,11 +179,11 @@ export function ListingForm({ type, mode, id }: { type: ListingType; mode: "crea
           </Field>
           <TypeFields type={type} listing={listing} />
           {message ? (
-            <p className="rounded-md bg-danger-bg px-3 py-2 text-danger" role="alert">
+            <p className="rounded-xl bg-danger-bg px-3 py-2 text-sm text-danger" role="alert">
               {message}
             </p>
           ) : null}
-          <button type="submit" disabled={pending} className="rounded-md bg-accent px-4 py-2 font-semibold text-accent-ink disabled:opacity-60">
+          <button type="submit" disabled={pending} className={primaryClass}>
             {pending ? "Saving..." : "Save"}
           </button>
         </form>
@@ -194,7 +194,7 @@ export function ListingForm({ type, mode, id }: { type: ListingType; mode: "crea
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <label className="grid gap-1 text-sm font-semibold">
+    <label className="grid min-w-0 gap-1 text-sm">
       {label}
       {children}
     </label>

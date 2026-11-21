@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 
 import { errorText, readApi } from "@/components/api-client";
 import type { ListingCard, RequestCard } from "@/components/listing-types";
+import { StatusBadge } from "@/components/status-badge";
+import { linkClass, moduleEmoji, outlineClass, pageClass, primaryClass } from "@/components/ui";
 import { moduleMeta } from "@/lib/modules";
 import { isFinalRequestStatus, listingStatus, requestStatus, type ListingType } from "@/lib/status";
 
@@ -97,25 +99,31 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-8">
-      <h1 className="font-display text-3xl">Dashboard</h1>
-      {state === "loading" ? <p className="mt-6 text-muted">Loading your dashboard...</p> : null}
+    <div className={`${pageClass} py-8`}>
+      <h1 className="text-2xl">Dashboard</h1>
+      {state === "loading" ? <p className="mt-6 text-sm text-muted">Loading your dashboard...</p> : null}
       {state === "error" ? (
-        <p className="mt-6 rounded-md bg-danger-bg px-3 py-2 text-danger" role="alert">
-          {message}{" "}
+        <div className="mt-6 rounded-xl border border-line bg-card p-6">
+          <p className="text-sm text-danger" role="alert">
+            {message}
+          </p>
           {message.startsWith("Sign in") ? (
-            <Link href="/login" className="font-semibold underline">
+            <Link href="/login" className={`${primaryClass} mt-4`}>
               Log in
             </Link>
           ) : null}
-        </p>
+        </div>
       ) : null}
-      {message && state === "ready" ? <p className="mt-4 rounded-md border border-line px-3 py-2 text-sm">{message}</p> : null}
+      {message && state === "ready" ? (
+        <p className="mt-4 break-words rounded-xl border border-line bg-card px-3 py-2 text-sm">{message}</p>
+      ) : null}
       {state === "ready" ? (
         <div className="mt-6 grid gap-8">
           <section>
-            <h2 className="font-display text-2xl">Incoming requests</h2>
-            {incoming.length === 0 ? <p className="mt-2 text-sm text-muted">No one has contacted you yet.</p> : null}
+            <h2 className="text-xl">Incoming requests</h2>
+            {incoming.length === 0 ? (
+              <p className="mt-2 text-sm text-muted">No one has contacted you yet. New applications and inquiries land here.</p>
+            ) : null}
             <ul className="mt-3 grid gap-3">
               {incoming.map((item) => (
                 <RequestRow key={item.id} item={item} onStatus={setRequestStatus} />
@@ -123,8 +131,15 @@ export default function DashboardPage() {
             </ul>
           </section>
           <section>
-            <h2 className="font-display text-2xl">My requests</h2>
-            {outgoing.length === 0 ? <p className="mt-2 text-sm text-muted">You have not sent a request yet.</p> : null}
+            <h2 className="text-xl">My requests</h2>
+            {outgoing.length === 0 ? (
+              <div className="mt-2">
+                <p className="text-sm text-muted">You have not sent a request yet.</p>
+                <Link href="/jobs" className={`${primaryClass} mt-4`}>
+                  Browse jobs
+                </Link>
+              </div>
+            ) : null}
             <ul className="mt-3 grid gap-3">
               {outgoing.map((item) => (
                 <RequestRow key={item.id} item={item} onStatus={setRequestStatus} />
@@ -132,33 +147,39 @@ export default function DashboardPage() {
             </ul>
           </section>
           <section>
-            <h2 className="font-display text-2xl">My listings</h2>
-            {listings.length === 0 ? <p className="mt-2 text-sm text-muted">You have not posted anything yet.</p> : null}
+            <h2 className="text-xl">My listings</h2>
+            {listings.length === 0 ? (
+              <div className="mt-2">
+                <p className="text-sm text-muted">You have not posted anything yet.</p>
+                <Link href="/jobs/new" className={`${primaryClass} mt-4`}>
+                  Post a job
+                </Link>
+              </div>
+            ) : null}
             <ul className="mt-3 grid gap-3">
               {listings.map((item) => (
-                <li key={item.id} className="rounded-lg border border-line bg-surface p-4">
-                  <p className="text-sm text-muted">
-                    {moduleMeta[item.type].title} · {item.status}
-                  </p>
-                  <Link href={`${moduleMeta[item.type].path}/${item.id}`} className="font-display text-xl">
+                <li key={item.id} className="min-w-0 rounded-xl border border-line bg-card p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="text-2xl" aria-hidden>
+                      {moduleEmoji[item.type]}
+                    </span>
+                    <StatusBadge status={item.status} />
+                  </div>
+                  <p className="mt-3 text-sm text-muted">{moduleMeta[item.type].title}</p>
+                  <Link href={`${moduleMeta[item.type].path}/${item.id}`} className={`mt-1 block break-words text-base ${linkClass}`}>
                     {item.title}
                   </Link>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    <Link href={`${moduleMeta[item.type].path}/${item.id}/edit`} className="rounded-md border border-line px-3 py-1.5 text-sm">
+                    <Link href={`${moduleMeta[item.type].path}/${item.id}/edit`} className={outlineClass}>
                       Edit
                     </Link>
-                    <button type="button" onClick={() => removeListing(item.id)} className="rounded-md border border-line px-3 py-1.5 text-sm">
+                    <button type="button" onClick={() => removeListing(item.id)} className={outlineClass}>
                       Delete
                     </button>
                     {listingStatus[item.type].values
                       .filter((status) => status !== item.status && status !== "Removed")
                       .map((status) => (
-                        <button
-                          key={status}
-                          type="button"
-                          onClick={() => setListingStatus(item.id, status)}
-                          className="rounded-md bg-accent px-3 py-1.5 text-sm font-semibold text-accent-ink"
-                        >
+                        <button key={status} type="button" onClick={() => setListingStatus(item.id, status)} className={outlineClass}>
                           {status}
                         </button>
                       ))}
@@ -177,33 +198,28 @@ function RequestRow({ item, onStatus }: { item: RequestCard; onStatus: (id: stri
   const type = item.type as ListingType;
   const path = moduleMeta[type].path;
   return (
-    <li className="rounded-lg border border-line bg-surface p-4">
-      <p className="text-sm text-muted">
-        {item.status}
-        {item.startDate ? ` · ${item.startDate} to ${item.endDate}` : ""}
-      </p>
-      <Link href={`${path}/${item.listing.id}`} className="font-semibold">
+    <li className="min-w-0 rounded-xl border border-line bg-card p-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <StatusBadge status={item.status} />
+        {item.startDate ? <span className="text-sm text-muted">{item.startDate} to {item.endDate}</span> : null}
+      </div>
+      <Link href={`${path}/${item.listing.id}`} className={`mt-2 block break-words text-base ${linkClass}`}>
         {item.listing.title || "Listing"}
       </Link>
       <p className="mt-1 text-sm">
         {item.viewer === "to" ? `From ${item.from.name}, ${item.from.town}` : `To ${item.to.name}, ${item.to.town}`}
       </p>
-      <p className="mt-1 text-sm text-muted">{item.message}</p>
+      <p className="mt-1 break-words text-sm text-muted">{item.message}</p>
       {!isFinalRequestStatus(type, item.status) ? (
         <div className="mt-3 flex flex-wrap gap-2">
           {item.viewer === "from" ? (
-            <button type="button" onClick={() => onStatus(item.id, "Withdrawn")} className="rounded-md border border-line px-3 py-1.5 text-sm">
+            <button type="button" onClick={() => onStatus(item.id, "Withdrawn")} className={outlineClass}>
               Withdraw
             </button>
           ) : null}
           {item.viewer === "to"
             ? requestStatus[type].ownerSets.map((status) => (
-                <button
-                  key={status}
-                  type="button"
-                  onClick={() => onStatus(item.id, status)}
-                  className="rounded-md border border-line px-3 py-1.5 text-sm"
-                >
+                <button key={status} type="button" onClick={() => onStatus(item.id, status)} className={outlineClass}>
                   {status}
                 </button>
               ))

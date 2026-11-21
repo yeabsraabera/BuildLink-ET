@@ -1,19 +1,14 @@
 import type { Metadata } from "next";
-import { Fraunces, Source_Sans_3 } from "next/font/google";
+import { Inter } from "next/font/google";
 import { Suspense } from "react";
 
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
 
-const sourceSans = Source_Sans_3({
-  variable: "--font-source",
+const inter = Inter({
   subsets: ["latin"],
-});
-
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
-  subsets: ["latin"],
+  variable: "--font-inter",
 });
 
 const themeScript = `(function(){try{if(localStorage.getItem("buildlink-theme")==="dark"){document.documentElement.classList.add("dark")}}catch(e){}})()`;
@@ -32,11 +27,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${sourceSans.variable} ${fraunces.variable} h-full antialiased`}
+      className={`${inter.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col">
+      <body className="flex min-h-full min-w-0 flex-col overflow-x-clip font-sans">
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-        <Suspense fallback={<div className="h-16 border-b border-line bg-surface" />}>
+        <Suspense fallback={<div className="h-14 border-b border-line bg-card" />}>
           <SiteHeader />
         </Suspense>
         <main className="flex-1">{children}</main>

@@ -6,11 +6,10 @@ import { useEffect, useState, type FormEvent } from "react";
 
 import { errorText, readApi } from "@/components/api-client";
 import { detailText, type ListingCard, type LocationOption } from "@/components/listing-types";
+import { StatusBadge } from "@/components/status-badge";
+import { fieldClass, linkClass, moduleEmoji, outlineClass, pageClass, primaryClass } from "@/components/ui";
 import { moduleMeta } from "@/lib/modules";
 import type { ListingType } from "@/lib/status";
-
-const inputClass =
-  "w-full rounded-md border border-line bg-background px-3 py-2 text-foreground outline-none focus:border-accent";
 
 export function ListingBrowser({ type }: { type: ListingType }) {
   const meta = moduleMeta[type];
@@ -84,10 +83,10 @@ export function ListingBrowser({ type }: { type: ListingType }) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-8">
+    <div className={`${pageClass} py-8`}>
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="font-display text-3xl">{meta.title}</h1>
+        <div className="min-w-0">
+          <h1 className="text-2xl">{meta.title}</h1>
           {type === "material" ? (
             <p className="mt-2 max-w-xl text-sm text-muted">
               BuildLink ET has not inspected items. Ask the owner before you buy or collect anything.
@@ -95,19 +94,19 @@ export function ListingBrowser({ type }: { type: ListingType }) {
           ) : null}
         </div>
         {signedIn ? (
-          <Link href={`${meta.path}/new`} className="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-accent-ink">
+          <Link href={`${meta.path}/new`} className={primaryClass}>
             {meta.post}
           </Link>
         ) : (
-          <Link href="/login" className="text-sm font-semibold text-accent">
+          <Link href="/login" className={`text-sm ${linkClass}`}>
             Log in to post
           </Link>
         )}
       </div>
 
-      <form onSubmit={onSearch} className="mt-6 grid gap-3 sm:grid-cols-4">
-        <input className={inputClass} name="q" defaultValue={q} placeholder="Search" aria-label="Search" />
-        <select className={inputClass} name="category" defaultValue={category} aria-label="Category">
+      <form onSubmit={onSearch} className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <input className={fieldClass} name="q" defaultValue={q} placeholder="Search" aria-label="Search" />
+        <select className={fieldClass} name="category" defaultValue={category} aria-label="Category">
           <option value="">All categories</option>
           {meta.categories.map((item) => (
             <option key={item} value={item}>
@@ -115,7 +114,7 @@ export function ListingBrowser({ type }: { type: ListingType }) {
             </option>
           ))}
         </select>
-        <select className={inputClass} name="location" defaultValue={location} aria-label="Location">
+        <select className={fieldClass} name="location" defaultValue={location} aria-label="Location">
           <option value="">All towns</option>
           {places.map((place) => (
             <option key={place.id} value={place.name}>
@@ -123,51 +122,66 @@ export function ListingBrowser({ type }: { type: ListingType }) {
             </option>
           ))}
         </select>
-        <button type="submit" className="rounded-md border border-line bg-surface px-4 py-2 font-semibold">
+        <button type="submit" className={outlineClass}>
           Filter
         </button>
       </form>
 
-      {state === "loading" ? <p className="mt-8 text-muted">Loading {meta.title.toLowerCase()}...</p> : null}
+      {state === "loading" ? (
+        <ul className="mt-6 grid gap-3 sm:grid-cols-2" aria-busy="true">
+          {Array.from({ length: 4 }, (_, index) => (
+            <li key={index} className="rounded-xl border border-line bg-card p-4">
+              <div className="h-7 w-7 rounded-md bg-background" />
+              <div className="mt-3 h-4 w-2/3 rounded-md bg-background" />
+              <div className="mt-2 h-3 w-1/2 rounded-md bg-background" />
+              <div className="mt-2 h-3 w-1/3 rounded-md bg-background" />
+            </li>
+          ))}
+          <li className="sr-only">Loading {meta.title.toLowerCase()}...</li>
+        </ul>
+      ) : null}
       {state === "error" ? (
-        <p className="mt-8 rounded-md bg-danger-bg px-3 py-2 text-danger" role="alert">
+        <p className="mt-8 rounded-xl bg-danger-bg px-3 py-2 text-sm text-danger" role="alert">
           {message}
         </p>
       ) : null}
-      {state === "ready" && items.length === 0 ? <p className="mt-8 text-muted">{meta.empty}</p> : null}
+      {state === "ready" && items.length === 0 ? (
+        <div className="mt-8 rounded-xl border border-line bg-card p-6">
+          <p className="text-base">Nothing matches yet</p>
+          <p className="mt-1 text-sm text-muted">{meta.empty}</p>
+          <Link href={signedIn ? `${meta.path}/new` : "/login"} className={`${primaryClass} mt-4`}>
+            {signedIn ? meta.post : "Log in to post"}
+          </Link>
+        </div>
+      ) : null}
       {state === "ready" && items.length > 0 ? (
-        <ul className="mt-6 grid gap-4 sm:grid-cols-2">
+        <ul className="mt-6 grid gap-3 sm:grid-cols-2">
           {items.map((item) => (
-            <li key={item.id}>
-              <Link href={`${meta.path}/${item.id}`} className="block h-full rounded-lg border border-line bg-surface p-4">
-                <p className="text-sm text-muted">
+            <li key={item.id} className="min-w-0">
+              <Link href={`${meta.path}/${item.id}`} className="block h-full rounded-xl border border-line bg-card p-4 hover:bg-background">
+                <div className="flex items-start justify-between gap-3">
+                  <span className="text-2xl" aria-hidden>
+                    {moduleEmoji[item.type]}
+                  </span>
+                  <StatusBadge status={item.status} />
+                </div>
+                <h2 className="mt-3 break-words text-base">{item.title}</h2>
+                <p className="mt-1 break-words text-sm text-muted">
                   {item.category} · {item.location.name}
                 </p>
-                <h2 className="mt-1 font-display text-2xl">{item.title}</h2>
-                <p className="mt-2 line-clamp-3 text-sm leading-6 text-muted">{item.description}</p>
-                <p className="mt-3 text-sm">{summary(item)}</p>
-                <p className="mt-2 text-sm text-muted">
-                  {item.owner.name}, {item.owner.town}
-                  {item.type === "professional" && item.verification === "verified" ? " · Reviewed" : ""}
-                  {item.type === "material" && item.status === "Reserved" ? " · Reserved" : ""}
-                </p>
+                <p className="mt-2 break-words text-sm">{summary(item)}</p>
               </Link>
             </li>
           ))}
         </ul>
       ) : null}
       {total > 12 ? (
-        <div className="mt-6 flex items-center gap-3">
-          <button type="button" className="rounded-md border border-line px-3 py-1.5 disabled:opacity-40" disabled={page <= 1} onClick={() => go(page - 1)}>
+        <div className="mt-6 flex flex-wrap items-center gap-3">
+          <button type="button" className={outlineClass} disabled={page <= 1} onClick={() => go(page - 1)}>
             Previous
           </button>
           <span className="text-sm text-muted">Page {page}</span>
-          <button
-            type="button"
-            className="rounded-md border border-line px-3 py-1.5 disabled:opacity-40"
-            disabled={page * 12 >= total}
-            onClick={() => go(page + 1)}
-          >
+          <button type="button" className={outlineClass} disabled={page * 12 >= total} onClick={() => go(page + 1)}>
             Next
           </button>
         </div>

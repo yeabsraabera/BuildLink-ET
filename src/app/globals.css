@@ -4,55 +4,71 @@
 
 :root {
   color-scheme: light;
-  --background: #f4efe6;
-  --surface: #fffaf4;
-  --foreground: #2a2118;
-  --muted: #6f6256;
-  --line: #e4d8c8;
-  --accent: #c45c26;
-  --accent-hover: #9a4318;
-  --accent-ink: #fffaf4;
-  --footer: #3d2b22;
-  --footer-ink: #f6efe6;
-  --danger: #8a3418;
-  --danger-bg: #f6e4d8;
+  --background: #faf6ef;
+  --card: #ffffff;
+  --foreground: #211d18;
+  --muted: #6f675b;
+  --line: #e6dccb;
+  --accent: #c2410c;
+  --accent-hover: #9a3410;
+  --accent-ink: #ffffff;
+  --success: #1d6b3a;
+  --success-bg: #e7f5ec;
+  --danger: #9f2d2d;
+  --danger-bg: #fdeceb;
 }
 
 .dark {
   color-scheme: dark;
-  --background: #1b1612;
-  --surface: #261f1a;
-  --foreground: #f6efe6;
-  --muted: #cbbbaa;
-  --line: #3d322a;
-  --accent: #e07a3d;
-  --accent-hover: #c45c26;
-  --accent-ink: #1b1612;
-  --footer: #120e0c;
-  --footer-ink: #f6efe6;
-  --danger: #f0c2a4;
-  --danger-bg: #3a241c;
+  --background: #141210;
+  --card: #221e1a;
+  --foreground: #f4efe8;
+  --muted: #c4b8a8;
+  --line: #3d352c;
+  --accent: #c2410c;
+  --accent-hover: #a3350b;
+  --accent-ink: #ffffff;
+  --success: #b7e0c4;
+  --success-bg: #1c3326;
+  --danger: #f0c2bc;
+  --danger-bg: #3a2422;
 }
 
 @theme inline {
   --color-background: var(--background);
-  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-surface: var(--card);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-line: var(--line);
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-accent-ink: var(--accent-ink);
-  --color-footer: var(--footer);
-  --color-footer-ink: var(--footer-ink);
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
   --color-danger: var(--danger);
   --color-danger-bg: var(--danger-bg);
-  --font-sans: var(--font-source);
-  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-source), "Segoe UI", sans-serif;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+b,
+strong,
+th,
+button,
+input,
+select,
+textarea {
+  font-weight: inherit;
 }

@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 
-const inputClass =
-  "w-full rounded-md border border-line bg-background px-3 py-2 text-foreground outline-none focus:border-accent";
+import { fieldClass, linkClass, primaryClass } from "@/components/ui";
+
+const inputClass = fieldClass;
 
 type ApiBody = {
   success: boolean;
@@ -79,19 +80,19 @@ export function RegisterForm() {
   return (
     <form onSubmit={onSubmit} className="grid gap-4" noValidate>
       {error ? (
-        <p role="alert" className="rounded-md bg-danger-bg px-3 py-2 text-sm text-danger">
+        <p role="alert" className="rounded-xl bg-danger-bg px-3 py-2 text-sm text-danger">
           {error}
         </p>
       ) : null}
-      <label className="grid gap-1 text-sm">
+      <label className="grid min-w-0 gap-1 text-sm">
         Name
         <input className={inputClass} name="name" autoComplete="name" required />
       </label>
-      <label className="grid gap-1 text-sm">
+      <label className="grid min-w-0 gap-1 text-sm">
         Email
         <input className={inputClass} name="email" type="email" autoComplete="email" required />
       </label>
-      <label className="grid gap-1 text-sm">
+      <label className="grid min-w-0 gap-1 text-sm">
         Password
         <input
           className={inputClass}
@@ -102,7 +103,7 @@ export function RegisterForm() {
           required
         />
       </label>
-      <label className="grid gap-1 text-sm">
+      <label className="grid min-w-0 gap-1 text-sm">
         Town
         <select className={inputClass} name="town" required defaultValue="">
           <option value="" disabled>
@@ -116,20 +117,20 @@ export function RegisterForm() {
         </select>
         {townsError ? <span className="text-danger">{townsError}</span> : null}
       </label>
-      <label className="grid gap-1 text-sm">
+      <label className="grid min-w-0 gap-1 text-sm">
         Phone (optional)
         <input className={inputClass} name="phone" type="tel" autoComplete="tel" />
       </label>
       <button
         type="submit"
         disabled={pending || towns.length === 0}
-        className="rounded-md bg-accent px-4 py-2 text-accent-ink hover:bg-accent-hover disabled:opacity-60"
+        className={primaryClass}
       >
         {pending ? "Creating account..." : "Register"}
       </button>
       <p className="text-sm text-muted">
         Already registered?{" "}
-        <Link href="/login" className="text-accent">
+        <Link href="/login" className={linkClass}>
           Login
         </Link>
       </p>

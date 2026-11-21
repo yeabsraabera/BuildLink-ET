@@ -1,29 +1,31 @@
 import Link from "next/link";
 
+import { linkClass, moduleEmoji, outlineClass, pageClass, primaryClass } from "@/components/ui";
+
 const modules = [
   {
     href: "/jobs",
+    type: "job",
     title: "Jobs",
     text: "Find site work or post a vacancy.",
-    className: "bg-[#9a4318] hover:bg-[#7d3513]",
   },
   {
     href: "/materials",
+    type: "material",
     title: "Materials",
     text: "List or browse surplus from real projects.",
-    className: "bg-[#3f4c30] hover:bg-[#313b26]",
   },
   {
     href: "/rentals",
+    type: "rental",
     title: "Rentals",
     text: "Borrow mixers, generators, and tools.",
-    className: "bg-[#6e4330] hover:bg-[#583628]",
   },
   {
     href: "/professionals",
+    type: "professional",
     title: "Professionals",
     text: "Meet engineers, artisans, and supervisors.",
-    className: "bg-[#2c4038] hover:bg-[#22322c]",
   },
 ] as const;
 
@@ -68,36 +70,53 @@ const steps = [
 
 export default function HomePage() {
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-12">
-      <p className="text-sm font-semibold tracking-wide text-accent">Southwest Ethiopia</p>
-      <h1 className="mt-2 font-display text-4xl text-foreground sm:text-5xl">BuildLink ET</h1>
-      <p className="mt-4 max-w-xl text-lg leading-8 text-muted">
-        Jobs, surplus materials, equipment rentals, and professionals. One account, starting in Jimma.
-      </p>
-      <p className="mt-3 font-display text-2xl text-foreground">Build smarter. Connect better. Waste less.</p>
-      <div className="mt-8 grid gap-4 sm:grid-cols-2">
+    <div className={`${pageClass} py-10 sm:py-14`}>
+      <section className="max-w-2xl">
+        <h1 className="text-3xl leading-tight tracking-tight sm:text-4xl">
+          Build smarter. Connect better. Waste less.
+        </h1>
+        <p className="mt-3 text-base leading-6 text-muted">
+          Jobs, surplus materials, equipment rentals, and professionals. One account, starting in Jimma.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link href="/login" className={primaryClass}>
+            Try the demo
+          </Link>
+          <Link href="/jobs" className={outlineClass}>
+            Browse jobs
+          </Link>
+        </div>
+      </section>
+
+      <div className="mt-10 grid grid-cols-2 gap-3 lg:grid-cols-4">
         {modules.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className={`block rounded-lg p-5 text-[#fffaf4] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground ${item.className}`}
+            className="min-w-0 rounded-xl border border-line bg-card p-4 hover:bg-background"
           >
-            <span className="font-display text-2xl">{item.title}</span>
-            <span className="mt-2 block text-sm leading-6">{item.text}</span>
+            <span className="text-2xl" aria-hidden>
+              {moduleEmoji[item.type]}
+            </span>
+            <span className="mt-3 block text-base">{item.title}</span>
+            <span className="mt-1 block text-sm leading-5 text-muted">{item.text}</span>
           </Link>
         ))}
       </div>
+
       <section className="mt-12">
-        <h2 className="font-display text-3xl">Demo in six steps</h2>
-        <ol className="mt-4 grid gap-4 sm:grid-cols-2">
+        <h2 className="text-xl">Demo in six steps</h2>
+        <ol className="mt-4 grid gap-4">
           {steps.map((step, index) => (
-            <li key={step.title} className="rounded-lg border border-line bg-surface p-4">
-              <p className="text-sm font-semibold text-accent">Step {index + 1}</p>
-              <h3 className="mt-1 font-display text-xl">{step.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-muted">{step.text}</p>
-              <Link href={step.href} className="mt-3 inline-block text-sm font-semibold text-accent">
-                {step.link}
-              </Link>
+            <li key={step.title} className="flex min-w-0 gap-3">
+              <span className="w-6 shrink-0 text-sm text-muted">{index + 1}</span>
+              <div className="min-w-0">
+                <h3 className="text-base">{step.title}</h3>
+                <p className="mt-1 break-words text-sm leading-6 text-muted">{step.text}</p>
+                <Link href={step.href} className={`mt-2 inline-block text-sm ${linkClass}`}>
+                  {step.link}
+                </Link>
+              </div>
             </li>
           ))}
         </ol>
