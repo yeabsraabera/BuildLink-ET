@@ -6,6 +6,7 @@ import "@/models/Request";
 import "@/models/Report";
 import "@/models/AdminLog";
 import "@/models/Location";
+import "@/models/Review";
 
 type MongooseCache = {
   conn: typeof mongoose | null;

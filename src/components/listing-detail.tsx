@@ -201,7 +201,14 @@ export function ListingDetail({ type, id }: { type: ListingType; id: string }) {
           </div>
           <h1 className="mt-2 break-words text-3xl leading-tight">{listing.title}</h1>
           <p className="mt-2 text-sm text-muted">
-            {listing.owner.name}, {listing.owner.town}
+            {listing.owner.id ? (
+              <Link href={`/profile/${listing.owner.id}`} className={linkClass}>
+                {listing.owner.name}
+              </Link>
+            ) : (
+              listing.owner.name
+            )}
+            , {listing.owner.town}
           </p>
           {type === "material" ? (
             <p className="mt-3 text-sm text-muted">BuildLink ET has not inspected items.</p>
@@ -262,7 +269,14 @@ export function ListingDetail({ type, id }: { type: ListingType; id: string }) {
                   <li key={item.id} className="border-t border-line py-3">
                     <p className="flex flex-wrap items-center gap-2 text-sm text-muted">
                       <span>
-                        {item.from.name}, {item.from.town}
+                        {item.from.id ? (
+                          <Link href={`/profile/${item.from.id}`} className={linkClass}>
+                            {item.from.name}
+                          </Link>
+                        ) : (
+                          item.from.name
+                        )}
+                        , {item.from.town}
                         {item.startDate ? ` · ${item.startDate} to ${item.endDate}` : ""}
                       </span>
                       <StatusBadge status={item.status} />

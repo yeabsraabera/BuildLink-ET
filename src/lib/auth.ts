@@ -20,6 +20,7 @@ export type SessionUser = {
 };
 
 export type PublicOwner = {
+  id: string;
   name: string;
   town: string;
 };
@@ -85,8 +86,12 @@ export function toSessionUser(user: UserLike): SessionUser {
   };
 }
 
-export function toPublicOwner(user: { name: string; town: string }): PublicOwner {
-  return { name: user.name, town: user.town };
+export function toPublicOwner(user: { _id?: unknown; name: string; town: string }): PublicOwner {
+  return {
+    id: user._id ? String(user._id) : "",
+    name: user.name,
+    town: user.town,
+  };
 }
 
 export async function getSessionUser(): Promise<SessionUser | null> {

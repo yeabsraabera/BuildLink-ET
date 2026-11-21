@@ -157,20 +157,30 @@ export function ListingBrowser({ type }: { type: ListingType }) {
       {state === "ready" && items.length > 0 ? (
         <ul className="mt-6 grid gap-3 sm:grid-cols-2">
           {items.map((item) => (
-            <li key={item.id} className="min-w-0">
-              <Link href={`${meta.path}/${item.id}`} className="block h-full rounded-xl border border-line bg-card p-4 hover:bg-background">
-                <div className="flex items-start justify-between gap-3">
-                  <span className="text-2xl" aria-hidden>
-                    {moduleEmoji[item.type]}
-                  </span>
-                  <StatusBadge status={item.status} />
-                </div>
-                <h2 className="mt-3 break-words text-base">{item.title}</h2>
-                <p className="mt-1 break-words text-sm text-muted">
-                  {item.category} · {item.location.name}
-                </p>
-                <p className="mt-2 break-words text-sm">{summary(item)}</p>
+            <li key={item.id} className="min-w-0 rounded-xl border border-line bg-card p-4">
+              <div className="flex items-start justify-between gap-3">
+                <span className="text-2xl" aria-hidden>
+                  {moduleEmoji[item.type]}
+                </span>
+                <StatusBadge status={item.status} />
+              </div>
+              <Link href={`${meta.path}/${item.id}`} className="mt-3 block break-words text-base">
+                {item.title}
               </Link>
+              <p className="mt-1 break-words text-sm text-muted">
+                {item.category} · {item.location.name}
+              </p>
+              <p className="mt-2 break-words text-sm">{summary(item)}</p>
+              <p className="mt-2 break-words text-sm text-muted">
+                {item.owner.id ? (
+                  <Link href={`/profile/${item.owner.id}`} className={linkClass}>
+                    {item.owner.name}
+                  </Link>
+                ) : (
+                  item.owner.name
+                )}
+                , {item.owner.town}
+              </p>
             </li>
           ))}
         </ul>

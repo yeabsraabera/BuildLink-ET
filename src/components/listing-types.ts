@@ -13,7 +13,7 @@ export type ListingCard = {
   createdAt?: string;
   isOwner: boolean;
   location: { id: string; name: string; region: string; zone: string };
-  owner: { name: string; town: string };
+  owner: { id: string; name: string; town: string };
   bookings?: { startDate?: string; endDate?: string }[];
 };
 
@@ -26,8 +26,8 @@ export type RequestCard = {
   endDate?: string;
   quantity?: number;
   listing: { id: string; title: string; type: ListingType; status: string };
-  from: { name: string; town: string };
-  to: { name: string; town: string };
+  from: { id: string; name: string; town: string };
+  to: { id: string; name: string; town: string };
   viewer: "from" | "to" | "other";
 };
 

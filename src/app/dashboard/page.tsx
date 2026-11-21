@@ -207,7 +207,31 @@ function RequestRow({ item, onStatus }: { item: RequestCard; onStatus: (id: stri
         {item.listing.title || "Listing"}
       </Link>
       <p className="mt-1 text-sm">
-        {item.viewer === "to" ? `From ${item.from.name}, ${item.from.town}` : `To ${item.to.name}, ${item.to.town}`}
+        {item.viewer === "to" ? (
+          <>
+            From{" "}
+            {item.from.id ? (
+              <Link href={`/profile/${item.from.id}`} className={linkClass}>
+                {item.from.name}
+              </Link>
+            ) : (
+              item.from.name
+            )}
+            , {item.from.town}
+          </>
+        ) : (
+          <>
+            To{" "}
+            {item.to.id ? (
+              <Link href={`/profile/${item.to.id}`} className={linkClass}>
+                {item.to.name}
+              </Link>
+            ) : (
+              item.to.name
+            )}
+            , {item.to.town}
+          </>
+        )}
       </p>
       <p className="mt-1 break-words text-sm text-muted">{item.message}</p>
       {!isFinalRequestStatus(type, item.status) ? (

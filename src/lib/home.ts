@@ -1,4 +1,5 @@
 import { connectDB } from "@/lib/db";
+import { ratingFor } from "@/lib/profile";
 import { Listing } from "@/models/Listing";
 
 export type HomeStats = {
@@ -60,8 +61,8 @@ export async function loadHomeContent() {
     Listing.countDocuments({ type: "rental", status: "Available" }),
     Listing.find({ type: "professional", status: "Active" })
       .sort({ createdAt: -1 })
-      .limit(3)
-      .populate("owner", "name town avatarUrl")
+      .limit(12)
+      .populate("owner", "name town avatarUrl skills")
       .populate("location", "name")
       .lean(),
     Listing.find({ type: "job", status: "Open" })
@@ -73,23 +74,32 @@ export async function loadHomeContent() {
 
   return {
     stats: { jobs, contractors, materials, equipment } satisfies HomeStats,
-    contractors: people.map((item) => {
-      const details = asRecord(item.details);
-      const owner = asRecord(item.owner);
-      const location = asRecord(item.location);
-      const skills = Array.isArray(details.skills) ? details.skills.map(String).slice(0, 2) : [];
-      return {
-        id: owner._id ? String(owner._id) : String(item._id),
-        listingId: String(item._id),
-        name: String(owner.name || item.title),
-        town: String(owner.town || location.name || ""),
-        trade: String(details.profession || details.headline || item.category),
-        skills,
-        photo: String(owner.avatarUrl || item.imageUrl || "") || undefined,
-        rating: 0,
-        reviewCount: 0,
-      } satisfies HomeContractor;
-    }),
+    contractors: (
+      await Promise.all(
+        people.map(async (item) => {
+          const details = asRecord(item.details);
+          const owner = asRecord(item.owner);
+          const location = asRecord(item.location);
+          const ownerSkills = Array.isArray(owner.skills) ? owner.skills.map(String) : [];
+          const listingSkills = Array.isArray(details.skills) ? details.skills.map(String) : [];
+          const skills = (ownerSkills.length > 0 ? ownerSkills : listingSkills).slice(0, 2);
+          const stats = owner._id ? await ratingFor(String(owner._id)) : { average: 0, count: 0 };
+          return {
+            id: owner._id ? String(owner._id) : String(item._id),
+            listingId: String(item._id),
+            name: String(owner.name || item.title),
+            town: String(owner.town || location.name || ""),
+            trade: String(details.profession || details.headline || item.category),
+            skills,
+            photo: String(owner.avatarUrl || item.imageUrl || "") || undefined,
+            rating: stats.average,
+            reviewCount: stats.count,
+          } satisfies HomeContractor;
+        }),
+      )
+    )
+      .sort((a, b) => b.rating - a.rating || b.reviewCount - a.reviewCount)
+      .slice(0, 3),
     jobs: latest.map((item) => {
       const details = asRecord(item.details);
       const location = asRecord(item.location);

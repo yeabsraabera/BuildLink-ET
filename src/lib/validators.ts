@@ -209,5 +209,43 @@ export const adminRemoveSchema = z
   })
   .strict();
 
+export const profileSchema = z
+  .object({
+    name: z.string().trim().min(2).max(80).optional(),
+    town: z.string().trim().min(2).max(80).optional(),
+    role: z.enum(["contractor", "employer", "both"]).optional(),
+    headline: z.string().trim().max(120).optional(),
+    bio: z.string().trim().max(2000).optional(),
+    skills: z.array(z.string().trim().min(1).max(40)).max(12).optional(),
+    experience: z
+      .array(
+        z.object({
+          title: z.string().trim().min(2).max(120),
+          company: z.string().trim().min(2).max(120),
+          years: z.string().trim().min(1).max(40),
+          description: z.string().trim().max(500).optional(),
+        }),
+      )
+      .max(12)
+      .optional(),
+    avatarUrl: z
+      .string()
+      .trim()
+      .refine((value) => value === "" || /^https?:\/\//.test(value), {
+        message: "Avatar URL must start with http:// or https://",
+      })
+      .optional(),
+  })
+  .strict();
+
+export const reviewWriteSchema = z
+  .object({
+    revieweeId: locationIdField,
+    rating: z.number().int().min(1).max(5),
+    comment: z.string().trim().min(5).max(1000),
+    listingId: locationIdField.optional(),
+  })
+  .strict();
+
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;

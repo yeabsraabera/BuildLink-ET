@@ -70,7 +70,11 @@ export function publicListing(
       region: location?.region ?? "",
       zone: location?.zone ?? "",
     },
-    owner: toPublicOwner({ name: owner?.name ?? "Unknown", town: owner?.town ?? "" }),
+    owner: toPublicOwner({
+      _id: owner?._id ?? listing.owner,
+      name: owner?.name ?? "Unknown",
+      town: owner?.town ?? "",
+    }),
   };
 }
 
@@ -110,8 +114,8 @@ export function publicRequest(
       type: listing?.type ?? request.type,
       status: listing?.status ?? "",
     },
-    from: toPublicOwner({ name: from?.name ?? "Unknown", town: from?.town ?? "" }),
-    to: toPublicOwner({ name: to?.name ?? "Unknown", town: to?.town ?? "" }),
+    from: toPublicOwner({ _id: from?._id ?? request.from, name: from?.name ?? "Unknown", town: from?.town ?? "" }),
+    to: toPublicOwner({ _id: to?._id ?? request.to, name: to?.name ?? "Unknown", town: to?.town ?? "" }),
     viewer: viewerId && fromId === viewerId ? "from" : viewerId && toId === viewerId ? "to" : "other",
   };
 }
