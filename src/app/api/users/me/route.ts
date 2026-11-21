@@ -31,6 +31,10 @@ export async function PATCH(request: Request) {
     if (parsed.data.skills) user.skills = parsed.data.skills;
     if (parsed.data.experience) user.experience = parsed.data.experience;
     if (parsed.data.avatarUrl !== undefined) user.avatarUrl = parsed.data.avatarUrl || undefined;
+    if (parsed.data.paymentMethods !== undefined) {
+      user.set("paymentMethods", parsed.data.paymentMethods);
+      user.markModified("paymentMethods");
+    }
     await user.save();
 
     const stats = await ratingFor(auth.user.id);

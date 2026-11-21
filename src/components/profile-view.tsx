@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import { errorText, readApi } from "@/components/api-client";
 import { linkClass, outlineClass, pageClass } from "@/components/ui";
+import { paymentMethodById } from "@/lib/payments";
 
 type ReviewItem = {
   id: string;
@@ -22,6 +23,7 @@ type Profile = {
   headline: string;
   bio: string;
   skills: string[];
+  paymentMethods: string[];
   experience: { title: string; company: string; years: string; description: string }[];
   avatarUrl?: string;
   rating: number;
@@ -108,6 +110,29 @@ export function ProfileView({ userId }: { userId: string }) {
               ))}
             </div>
           ) : null}
+
+          <section className="mt-8">
+            <h2 className="text-xl">Payment methods</h2>
+            <p className="mt-2 text-sm text-muted">
+              Ways {profile.isSelf ? "you" : profile.name} can be paid. BuildLink ET does not collect the money.
+            </p>
+            {profile.paymentMethods.length === 0 ? (
+              <p className="mt-2 text-sm">No payment methods listed yet.</p>
+            ) : (
+              <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+                {profile.paymentMethods.map((id) => {
+                  const method = paymentMethodById(id);
+                  if (!method) return null;
+                  return (
+                    <li key={method.id} className={`rounded-xl px-4 py-3 ${method.tone}`}>
+                      <p>{method.label}</p>
+                      <p className="text-sm">{method.detail}</p>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </section>
 
           <section className="mt-8">
             <h2 className="text-xl">Experience</h2>

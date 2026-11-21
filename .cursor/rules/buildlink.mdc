@@ -29,7 +29,7 @@ Next.js App Router, TypeScript, Tailwind, Route Handlers only (no Express), Mong
 - Request: job Submitted→Under review→Shortlisted→Interview requested→Accepted/Rejected; material New→Responded→Negotiating→Agreed/Declined→Completed (Agreed makes listing Reserved, Completed makes it Sold); professional New→Responded→Accepted/Declined; rental Requested→Approved/Rejected→Returned. Requester may Withdraw any non-final request.
 
 ## Profiles and reviews
-- User profiles include role (`contractor` | `employer` | `both`), headline, bio, town, skills, experience entries, and an avatar URL. Pages: `/profile/[userId]` and `/profile/edit`.
+- User profiles include role (`contractor` | `employer` | `both`), headline, bio, town, skills, experience entries, an avatar URL, and the payment methods they accept (Telebirr, CBE Birr, and Ethiopian banks). Pages: `/profile/[userId]` and `/profile/edit`. Never show an amount.
 - Reviews: rating 1-5. You may only review someone after an Accepted job application between you, only once per relationship, and never yourself. Reject otherwise with 403.
 - Public owner and profile views show name and town (plus public profile fields). Never expose email or passwordHash.
 
@@ -46,10 +46,10 @@ Next.js App Router, TypeScript, Tailwind, Route Handlers only (no Express), Mong
 Responsive construction-company landing on `/`. Signed-in app pages: `/jobs`, `/materials`, `/rentals`, `/professionals`, a detail page per module with the apply/inquiry/request form, `/dashboard`, `/admin`, `/profile/[userId]`. Shared navbar, loading/empty/error states, light and dark mode.
 
 ## Honesty
-No fake payments, escrow, insurance or official verification. Footer says this is a prototype. Material pages say BuildLink ET has not inspected items. Never show private contact details.
+No checkout, escrow, insurance, or official verification. A profile may list accepted payment methods, and the copy says BuildLink ET does not collect the money. Never show an amount. Footer says this is a prototype. Material pages say BuildLink ET has not inspected items. Never show private contact details.
 
 ## OUT OF SCOPE (do not add, tell me instead)
-Favorites, maps, AI features, email/SMS, file uploads, chat, payments, multi-language, tests beyond a few key API checks.
+Favorites, maps, AI features, email/SMS, file uploads, chat, payment checkout, multi-language, tests beyond a few key API checks.
 
 ## Working style
 Build in phases and stop after each. The app must stay runnable after every phase. Keep code simple and readable. If tempted to add something not listed, skip it and mention it.

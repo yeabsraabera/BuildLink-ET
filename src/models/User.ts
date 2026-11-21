@@ -1,5 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
+import { paymentMethodIds } from "@/lib/payments";
+
 const experienceSchema = new Schema(
   {
     title: { type: String, required: true, trim: true, maxlength: 120 },
@@ -27,6 +29,7 @@ const userSchema = new Schema(
     skills: { type: [String], default: [] },
     experience: { type: [experienceSchema], default: [] },
     avatarUrl: { type: String, trim: true },
+    paymentMethods: { type: [String], enum: paymentMethodIds, default: [] },
     isAdmin: { type: Boolean, default: false },
     accountStatus: {
       type: String,
@@ -37,4 +40,7 @@ const userSchema = new Schema(
   { timestamps: true },
 );
 
-export const User = mongoose.models.User || mongoose.model("User", userSchema);
+if (mongoose.models.User) {
+  delete mongoose.models.User;
+}
+export const User = mongoose.model("User", userSchema);

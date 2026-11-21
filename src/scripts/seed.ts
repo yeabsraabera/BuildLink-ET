@@ -646,6 +646,15 @@ async function upsertLocation(seed: (typeof locationSeeds)[number]) {
   return location;
 }
 
+const paymentSeeds: Record<string, string[]> = {
+  "sara@buildlink.et": ["cbe", "coop-oromia"],
+  "meron@buildlink.et": ["telebirr"],
+  "abebe@buildlink.et": ["wegagen", "cbe"],
+  "dawit@buildlink.et": ["telebirr", "cbe"],
+  "hana@buildlink.et": ["telebirr", "cbe-birr", "awash"],
+  "yonas@buildlink.et": ["dashen", "abyssinia"],
+};
+
 async function upsertUser(seed: UserSeed, passwordHash: string) {
   const existing = await User.findOne({ email: seed.email });
   const user = existing ?? new User({ email: seed.email });
@@ -661,6 +670,7 @@ async function upsertUser(seed: UserSeed, passwordHash: string) {
     skills: seed.skills,
     experience: seed.experience,
     avatarUrl: seed.avatarUrl,
+    paymentMethods: paymentSeeds[seed.email] ?? [],
   });
   await user.save();
   return user;

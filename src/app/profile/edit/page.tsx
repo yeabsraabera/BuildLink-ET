@@ -7,6 +7,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { errorText, readApi } from "@/components/api-client";
 import { ChoiceField } from "@/components/choice-field";
 import { fieldClass, linkClass, pageClass, primaryClass } from "@/components/ui";
+import { paymentMethods } from "@/lib/payments";
 
 type Town = { id: string; name: string };
 type Profile = {
@@ -17,6 +18,7 @@ type Profile = {
   headline: string;
   bio: string;
   skills: string[];
+  paymentMethods: string[];
   experience: { title: string; company: string; years: string; description: string }[];
   avatarUrl?: string;
 };
@@ -28,6 +30,7 @@ export default function EditProfilePage() {
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState(false);
+  const [selectedPayments, setSelectedPayments] = useState<string[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -52,6 +55,7 @@ export default function EditProfilePage() {
           return;
         }
         setProfile(body.data);
+        setSelectedPayments(body.data.paymentMethods ?? []);
         setState("ready");
       })
       .catch(() => {
@@ -95,6 +99,7 @@ export default function EditProfilePage() {
           skills,
           experience,
           avatarUrl: String(form.get("avatarUrl") || ""),
+          paymentMethods: selectedPayments,
         }),
       });
       const body = await readApi<{ id: string }>(response);
@@ -168,6 +173,36 @@ export default function EditProfilePage() {
             Skills, separated by commas
             <input className={fieldClass} name="skills" defaultValue={profile.skills.join(", ")} />
           </label>
+          <fieldset className="grid gap-2">
+            <legend className="text-sm">Payment methods</legend>
+            <p className="text-sm text-muted">Choose Telebirr or a bank. These are the ways you can be paid.</p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {paymentMethods.map((method) => {
+                const selected = selectedPayments.includes(method.id);
+                return (
+                  <label
+                    key={method.id}
+                    className={`flex cursor-pointer items-start gap-3 rounded-xl border px-3 py-3 ${selected ? `${method.tone} border-transparent` : "border-line bg-card"}`}
+                  >
+                    <input
+                      type="checkbox"
+                      className="mt-1"
+                      checked={selected}
+                      onChange={() =>
+                        setSelectedPayments((current) =>
+                          current.includes(method.id) ? current.filter((id) => id !== method.id) : [...current, method.id],
+                        )
+                      }
+                    />
+                    <span>
+                      <span className="block">{method.label}</span>
+                      <span className="block text-sm">{method.detail}</span>
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          </fieldset>
           <label className="grid gap-1 text-sm">
             Avatar URL
             <input className={fieldClass} name="avatarUrl" type="url" defaultValue={profile.avatarUrl ?? ""} />

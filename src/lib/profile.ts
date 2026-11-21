@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 import { toPublicOwner } from "@/lib/auth";
+import { paymentMethodIds, type PaymentMethodId } from "@/lib/payments";
 import { Review } from "@/models/Review";
 
 type Experience = {
@@ -21,6 +22,7 @@ export function publicProfile(
     skills?: string[];
     experience?: Experience[];
     avatarUrl?: string;
+    paymentMethods?: string[];
   },
   stats: { average: number; count: number },
 ) {
@@ -39,6 +41,9 @@ export function publicProfile(
       description: item.description ?? "",
     })),
     avatarUrl: user.avatarUrl || undefined,
+    paymentMethods: (user.paymentMethods ?? []).filter((id): id is PaymentMethodId =>
+      (paymentMethodIds as readonly string[]).includes(id),
+    ),
     rating: stats.average,
     reviewCount: stats.count,
   };

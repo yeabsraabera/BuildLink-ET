@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { paymentMethodIds } from "@/lib/payments";
 import { listingTypes } from "@/lib/status";
 
 const dateText = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Use a YYYY-MM-DD date");
@@ -223,6 +224,7 @@ export const profileSchema = z
         message: "Avatar URL must start with http:// or https://",
       })
       .optional(),
+    paymentMethods: z.array(z.enum(paymentMethodIds)).max(paymentMethodIds.length).optional(),
   })
   .strict();
 
