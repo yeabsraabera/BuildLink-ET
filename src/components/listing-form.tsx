@@ -97,7 +97,7 @@ export function ListingForm({ type, mode, id }: { type: ListingType; mode: "crea
       description: String(form.get("description") || ""),
       category: String(form.get("category") || ""),
       locationId: String(form.get("locationId") || ""),
-      imageUrl: String(form.get("imageUrl") || "") || undefined,
+      imageUrl: String(form.get("imageUrl") || ""),
       details,
     };
     try {
