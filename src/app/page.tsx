@@ -69,7 +69,7 @@ export default function HomePage() {
       <div className="relative z-10 mx-auto -mt-14 grid max-w-6xl gap-4 px-4 sm:grid-cols-3">
         {introCards.map((card) => (
           <article key={card.title} className="overflow-hidden rounded-xl border border-line bg-card fade-in">
-            <div className="relative h-40">
+            <div className="relative h-40 bg-navy">
               <Image src={card.image} alt="" fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
             </div>
             <div className="p-4">
@@ -116,7 +116,7 @@ async function LiveHome() {
               <li key={person.listingId} className="rounded-xl border border-line bg-card p-4">
                 <div className="flex items-center gap-3">
                   {person.photo ? (
-                    <Image src={person.photo} alt="" width={56} height={56} className="h-14 w-14 rounded-xl object-cover" />
+                    <Image src={person.photo} alt="" width={56} height={56} className="h-14 w-14 rounded-xl bg-navy object-cover ring-2 ring-line" />
                   ) : (
                     <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-navy text-white">
                       {person.name.slice(0, 1)}
@@ -136,7 +136,7 @@ async function LiveHome() {
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {person.skills.map((skill) => (
-                    <span key={skill} className="rounded-md bg-page px-2 py-1 text-xs text-muted">
+                    <span key={skill} className="rounded-md border border-line bg-page px-2 py-1 text-xs text-muted">
                       {skill}
                     </span>
                   ))}

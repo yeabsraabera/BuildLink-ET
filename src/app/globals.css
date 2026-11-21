@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 :root {
   color-scheme: light;
-  --background: #faf6ef;
+  --background: #f7f8fa;
   --card: #ffffff;
-  --foreground: #211d18;
-  --muted: #6f675b;
-  --line: #e6dccb;
+  --foreground: #0f2a3d;
+  --muted: #5c6b78;
+  --line: #d9e0e6;
   --accent: #f5b700;
   --accent-hover: #d9a000;
   --accent-ink: #0f2a3d;
@@ -20,20 +20,20 @@
   --danger-bg: #fdeceb;
 }
 
-.dark {
+:root[data-theme="dark"] {
   color-scheme: dark;
-  --background: #141210;
-  --card: #221e1a;
-  --foreground: #f4efe8;
-  --muted: #c4b8a8;
-  --line: #3d352c;
+  --background: #0b1824;
+  --card: #143044;
+  --foreground: #f4f7fa;
+  --muted: #c5d2dc;
+  --line: #2c4a60;
   --accent: #f5b700;
   --accent-hover: #d9a000;
   --accent-ink: #0f2a3d;
-  --navy: #0c2230;
-  --page: #141210;
+  --navy: #0f2a3d;
+  --page: #0b1824;
   --success: #b7e0c4;
-  --success-bg: #1c3326;
+  --success-bg: #163528;
   --danger: #f0c2bc;
   --danger-bg: #3a2422;
 }
@@ -61,6 +61,16 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+img,
+video {
+  background-color: var(--navy);
+}
+
+select option {
+  background-color: var(--card);
+  color: var(--foreground);
 }
 
 h1,

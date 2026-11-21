@@ -4,6 +4,7 @@ import { Suspense } from "react";
 
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { ThemeSync } from "@/components/theme-toggle";
 import "./globals.css";
 
 const inter = Inter({
@@ -11,7 +12,7 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const themeScript = `(function(){try{if(localStorage.getItem("buildlink-theme")==="dark"){document.documentElement.classList.add("dark")}}catch(e){}})()`;
+const themeScript = `(function(){try{var dark=localStorage.getItem("buildlink-theme")==="dark";var root=document.documentElement;root.setAttribute("data-theme",dark?"dark":"light");root.classList.toggle("dark",dark);root.style.colorScheme=dark?"dark":"light";}catch(e){}})()`;
 
 export const metadata: Metadata = {
   title: {
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full min-w-0 flex-col overflow-x-clip font-sans">
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <ThemeSync />
         <Suspense fallback={<div className="h-14 bg-navy" />}>
           <SiteHeader />
         </Suspense>

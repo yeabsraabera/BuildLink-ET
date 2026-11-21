@@ -56,7 +56,7 @@ export function LoginForm({ nextPath = "/dashboard" }: { nextPath?: string }) {
       ) : null}
       <label className="grid min-w-0 gap-1 text-sm">
         Email
-        <input className={inputClass} name="email" type="email" autoComplete="email" required />
+        <input className={inputClass} name="email" type="email" autoComplete="email" required placeholder="you@example.com" />
       </label>
       <label className="grid min-w-0 gap-1 text-sm">
         Password
@@ -68,17 +68,16 @@ export function LoginForm({ nextPath = "/dashboard" }: { nextPath?: string }) {
           required
         />
       </label>
-      <button
-        type="submit"
-        disabled={pending}
-        className={primaryClass}
-      >
-        {pending ? "Logging in..." : "Login"}
+      <button type="submit" disabled={pending} className={`${primaryClass} w-full`}>
+        {pending ? "Logging in..." : "Log in"}
       </button>
       <p className="text-sm text-muted">
         New here?{" "}
-        <Link href="/register" className={linkClass}>
-          Create an account
+        <Link
+          href={nextPath === "/dashboard" ? "/register" : `/register?next=${encodeURIComponent(nextPath)}`}
+          className={linkClass}
+        >
+          Create a free account
         </Link>
       </p>
     </form>

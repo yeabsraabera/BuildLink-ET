@@ -74,7 +74,7 @@ export function ProfileView({ userId }: { userId: string }) {
           <div className="flex flex-wrap items-start gap-4">
             {profile.avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={profile.avatarUrl} alt="" className="h-20 w-20 rounded-xl object-cover" />
+              <img src={profile.avatarUrl} alt="" className="h-20 w-20 rounded-xl bg-navy object-cover ring-2 ring-line" />
             ) : (
               <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-navy text-white">
                 {profile.name.slice(0, 1)}
@@ -90,7 +90,7 @@ export function ProfileView({ userId }: { userId: string }) {
                   ? `${profile.rating} stars · ${profile.reviewCount} reviews`
                   : "No reviews yet"}
               </p>
-              <span className="mt-2 inline-flex rounded-md bg-page px-2 py-1 text-xs text-muted">{profile.role}</span>
+              <span className="mt-2 inline-flex rounded-md border border-line bg-page px-2 py-1 text-xs text-muted">{profile.role}</span>
             </div>
             {profile.isSelf ? (
               <Link href="/profile/edit" className={`${outlineClass} ml-auto`}>
