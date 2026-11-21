@@ -103,6 +103,23 @@ export default function DashboardPage() {
   return (
     <div className={`${pageClass} py-8`}>
       <h1 className="text-2xl">Dashboard</h1>
+      <p className="mt-2 max-w-2xl text-sm text-muted">
+        This is your desk. Incoming requests are people reaching you. My requests are the ones you sent. My listings are the jobs, materials, equipment, and profiles you posted.
+      </p>
+      <div className="mt-5 grid grid-cols-2 gap-3">
+        <Link href="/jobs" className="rounded-xl bg-stat-crew px-4 py-4 text-stat-crew-ink">
+          <span className="block text-base">Browse jobs</span>
+          <span className="mt-1 block text-sm">
+            Look through open site work in Jimma and nearby towns, then send an application with a short note.
+          </span>
+        </Link>
+        <Link href="/jobs/new" className="rounded-xl bg-stat-job px-4 py-4 text-stat-job-ink">
+          <span className="block text-base">Post a job</span>
+          <span className="mt-1 block text-sm">
+            Describe the crew, the pay, and the town so contractors can respond.
+          </span>
+        </Link>
+      </div>
       {state === "loading" ? <p className="mt-6 text-sm text-muted">Loading your dashboard...</p> : null}
       {state === "error" ? (
         <div className="mt-6 rounded-xl border border-line bg-card p-6">
@@ -123,9 +140,10 @@ export default function DashboardPage() {
         <div className="mt-6 grid gap-8">
           <section>
             <h2 className="text-xl">Incoming requests</h2>
-            {incoming.length === 0 ? (
-              <p className="mt-2 text-sm text-muted">No one has contacted you yet. New applications and inquiries land here.</p>
-            ) : null}
+            <p className="mt-2 text-sm text-muted">
+              Applications and inquiries from other people land here, with their name and town. You can accept, decline, or mark them responded. Private phone numbers and emails stay hidden.
+            </p>
+            {incoming.length === 0 ? <p className="mt-2 text-sm">No one has contacted you yet.</p> : null}
             <ul className="mt-3 grid gap-3">
               {incoming.map((item) => (
                 <RequestRow key={item.id} item={item} onStatus={setRequestStatus} />
@@ -134,14 +152,10 @@ export default function DashboardPage() {
           </section>
           <section>
             <h2 className="text-xl">My requests</h2>
-            {outgoing.length === 0 ? (
-              <div className="mt-2">
-                <p className="text-sm text-muted">You have not sent a request yet.</p>
-                <Link href="/jobs" className={`${primaryClass} mt-4`}>
-                  Browse jobs
-                </Link>
-              </div>
-            ) : null}
+            <p className="mt-2 text-sm text-muted">
+              Jobs you applied for, questions you sent about materials, rental dates you asked for, and enquiries you sent to professionals. You can withdraw one while it is still open.
+            </p>
+            {outgoing.length === 0 ? <p className="mt-2 text-sm">You have not sent a request yet.</p> : null}
             <ul className="mt-3 grid gap-3">
               {outgoing.map((item) => (
                 <RequestRow key={item.id} item={item} onStatus={setRequestStatus} />
@@ -150,14 +164,10 @@ export default function DashboardPage() {
           </section>
           <section>
             <h2 className="text-xl">My listings</h2>
-            {listings.length === 0 ? (
-              <div className="mt-2">
-                <p className="text-sm text-muted">You have not posted anything yet.</p>
-                <Link href="/jobs/new" className={`${primaryClass} mt-4`}>
-                  Post a job
-                </Link>
-              </div>
-            ) : null}
+            <p className="mt-2 text-sm text-muted">
+              Everything you posted stays here. Edit the details, pause a listing, or take it down when the work is finished. Posting a job is the terracotta button above. Browsing open work is the teal one.
+            </p>
+            {listings.length === 0 ? <p className="mt-2 text-sm">You have not posted anything yet.</p> : null}
             <ul className="mt-3 grid gap-3">
               {listings.map((item) => (
                 <li key={item.id} className="min-w-0 rounded-xl border border-line bg-card p-4">

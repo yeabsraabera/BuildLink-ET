@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 
+import { ChoiceField } from "@/components/choice-field";
 import { fieldClass, linkClass, primaryClass } from "@/components/ui";
 import type { TownOption } from "@/lib/locations";
 
@@ -28,7 +29,6 @@ export function RegisterForm({
   const [towns, setTowns] = useState<TownOption[]>(initialTowns);
   const [townsError, setTownsError] = useState(initialError);
   const [loadingTowns, setLoadingTowns] = useState(initialTowns.length === 0 && !initialError);
-  const [town, setTown] = useState(initialTowns[0]?.name ?? "");
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
 
@@ -49,7 +49,6 @@ export function RegisterForm({
         throw new Error(body.message || "Could not load towns");
       }
       setTowns(body.data);
-      setTown((current) => current || body.data?.[0]?.name || "");
     } catch (reason: unknown) {
       setTownsError(reason instanceof Error ? reason.message : "Could not load towns");
     } finally {
@@ -60,12 +59,14 @@ export function RegisterForm({
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
-    if (!town) {
-      setError("Choose a town");
-      return;
-    }
     setPending(true);
     const form = new FormData(event.currentTarget);
+    const town = String(form.get("town") || "").trim();
+    if (town.length < 2) {
+      setError("Choose a town, or type one under Other");
+      setPending(false);
+      return;
+    }
     try {
       const response = await fetch("/api/auth/register", {
         method: "POST",
@@ -121,24 +122,17 @@ export function RegisterForm({
           placeholder="At least 6 characters"
         />
       </label>
-      <label className="grid min-w-0 gap-1 text-sm">
-        Town
-        <select
-          className={inputClass}
+      <div className="grid min-w-0 gap-1 text-sm">
+        <span>Town</span>
+        <ChoiceField
+          key={towns.map((item) => item.id).join(",") || "towns"}
           name="town"
-          required
-          value={town}
-          onChange={(event) => setTown(event.target.value)}
-        >
-          <option value="" disabled>
-            {loadingTowns ? "Loading towns..." : "Choose a town"}
-          </option>
-          {towns.map((item) => (
-            <option key={item.id} value={item.name}>
-              {item.name}, {item.region}
-            </option>
-          ))}
-        </select>
+          options={towns.map((item) => ({ value: item.name, label: `${item.name}, ${item.region}` }))}
+          defaultValue={towns[0]?.name ?? ""}
+          allowOther
+          placeholder={loadingTowns ? "Loading towns..." : "Choose a town"}
+          ariaLabel="Town"
+        />
         {townsError ? (
           <span className="text-danger">
             {townsError}{" "}
@@ -147,12 +141,12 @@ export function RegisterForm({
             </button>
           </span>
         ) : null}
-      </label>
+      </div>
       <label className="grid min-w-0 gap-1 text-sm">
         Phone (optional)
         <input className={inputClass} name="phone" type="tel" autoComplete="tel" placeholder="09..." />
       </label>
-      <button type="submit" disabled={pending || towns.length === 0} className={`${primaryClass} w-full`}>
+      <button type="submit" disabled={pending} className={`${primaryClass} w-full`}>
         {pending ? "Creating account..." : "Create account"}
       </button>
       <p className="text-sm text-muted">

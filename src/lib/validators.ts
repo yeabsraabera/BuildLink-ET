@@ -28,27 +28,7 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Enter your password").max(72),
 });
 
-const experienceLevels = ["entry-level", "junior", "intermediate", "senior"] as const;
-const employmentTypes = [
-  "permanent",
-  "contract",
-  "temporary",
-  "daily",
-  "internship",
-  "apprenticeship",
-] as const;
-const materialConditions = [
-  "New and unused",
-  "Unused surplus",
-  "Reusable / reclaimed",
-  "Used, good condition",
-  "Used, needs inspection",
-  "Damaged / for parts",
-] as const;
-const deliveryOptions = ["pickup", "delivery", "both"] as const;
-const pricePeriods = ["hourly", "daily", "weekly", "monthly"] as const;
-const rentalConditions = ["Good", "Fair", "Needs service"] as const;
-const availabilityValues = ["Available", "Limited", "Busy"] as const;
+const shortChoice = z.string().trim().min(2, "Choose an option or type your own").max(80);
 
 const titleField = z.string().trim().min(3).max(120);
 const descriptionField = z.string().trim().min(10).max(4000);
@@ -62,15 +42,13 @@ const imageUrlField = z
     message: "Image URL must start with http:// or https://",
   });
 
-const payTypes = ["fixed fee", "per day", "per month", "negotiable"] as const;
-
 const jobDetails = z.object({
-  experienceLevel: z.enum(experienceLevels),
-  employmentType: z.enum(employmentTypes),
+  experienceLevel: shortChoice,
+  employmentType: shortChoice,
   workersNeeded: z.number().int().positive().optional(),
   duration: z.string().trim().max(80).optional(),
   startDate: dateText.optional(),
-  payType: z.enum(payTypes).optional(),
+  payType: shortChoice.optional(),
   payAmount: z.number().nonnegative().optional(),
   payMin: z.number().nonnegative().optional(),
   payMax: z.number().nonnegative().optional(),
@@ -82,20 +60,20 @@ const jobDetails = z.object({
 });
 
 const materialDetails = z.object({
-  condition: z.enum(materialConditions),
+  condition: shortChoice,
   quantity: z.number().positive(),
   unit: z.string().trim().min(1).max(20),
   price: z.number().nonnegative(),
   currency: z.literal("ETB"),
   negotiable: z.boolean(),
-  deliveryOption: z.enum(deliveryOptions),
+  deliveryOption: shortChoice,
 });
 
 const rentalDetails = z.object({
   price: z.number().nonnegative(),
   currency: z.literal("ETB"),
-  pricePeriod: z.enum(pricePeriods),
-  condition: z.enum(rentalConditions),
+  pricePeriod: shortChoice,
+  condition: shortChoice,
   operatorIncluded: z.boolean(),
 });
 
@@ -103,7 +81,7 @@ const professionalDetails = z.object({
   headline: z.string().trim().min(3).max(120),
   profession: z.string().trim().min(2).max(80),
   skills: z.array(z.string().trim().min(1).max(40)).max(12).optional(),
-  availability: z.enum(availabilityValues),
+  availability: shortChoice,
 });
 
 const listingBase = {

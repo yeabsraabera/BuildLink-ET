@@ -24,6 +24,7 @@ export function ListingDetail({ type, id }: { type: ListingType; id: string }) {
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");
   const [message, setMessage] = useState("");
   const [notice, setNotice] = useState("");
+  const [reportNotice, setReportNotice] = useState("");
   const [pending, setPending] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
 
@@ -99,9 +100,10 @@ export function ListingDetail({ type, id }: { type: ListingType; id: string }) {
 
   async function sendRequest(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const formElement = event.currentTarget;
     setNotice("");
     setPending(true);
-    const form = new FormData(event.currentTarget);
+    const form = new FormData(formElement);
     const quantity = String(form.get("quantity") || "").trim();
     const proposedFee = String(form.get("proposedFee") || "").trim();
     try {
@@ -124,7 +126,7 @@ export function ListingDetail({ type, id }: { type: ListingType; id: string }) {
         return;
       }
       setNotice("Sent. The owner sees your name and town only.");
-      event.currentTarget.reset();
+      formElement.reset();
     } catch {
       setNotice("Could not send that");
     } finally {
@@ -163,19 +165,24 @@ export function ListingDetail({ type, id }: { type: ListingType; id: string }) {
 
   async function report(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    const response = await fetch("/api/reports", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ listingId: id, reason: form.get("reason") }),
-    });
-    const body = await readApi<{ id: string }>(response);
-    if (!response.ok || !body.success) {
-      setNotice(errorText(body, "Could not send the report"));
-      return;
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
+    try {
+      const response = await fetch("/api/reports", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ listingId: id, reason: form.get("reason") }),
+      });
+      const body = await readApi<{ id: string }>(response);
+      if (!response.ok || !body.success) {
+        setReportNotice(errorText(body, "Could not send the report"));
+        return;
+      }
+      setReportNotice("Report sent. An admin will review it.");
+      formElement.reset();
+    } catch {
+      setReportNotice("Could not send the report");
     }
-    setNotice("Report sent to the admin queue.");
-    event.currentTarget.reset();
   }
 
   return (
@@ -336,6 +343,7 @@ export function ListingDetail({ type, id }: { type: ListingType; id: string }) {
                   <button type="submit" disabled={pending} className={primaryClass}>
                     {pending ? "Sending..." : meta.request}
                   </button>
+                  {notice ? <p className="break-words rounded-xl border border-line bg-card px-3 py-2 text-sm">{notice}</p> : null}
                 </form>
               ) : (
                 <p className="mt-2 text-sm">
@@ -355,9 +363,10 @@ export function ListingDetail({ type, id }: { type: ListingType; id: string }) {
               <button type="submit" className={`${outlineClass} w-fit`}>
                 Report
               </button>
+              {reportNotice ? <p className="break-words rounded-xl border border-line bg-card px-3 py-2 text-sm">{reportNotice}</p> : null}
             </form>
           ) : null}
-          {notice ? <p className="mt-4 break-words rounded-xl border border-line bg-card px-3 py-2 text-sm">{notice}</p> : null}
+          {notice && listing.isOwner ? <p className="mt-4 break-words rounded-xl border border-line bg-card px-3 py-2 text-sm">{notice}</p> : null}
         </article>
       ) : null}
     </div>

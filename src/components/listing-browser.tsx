@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 
 import { errorText, readApi } from "@/components/api-client";
+import { ChoiceField, choiceOptions } from "@/components/choice-field";
 import { detailText, type ListingCard, type LocationOption } from "@/components/listing-types";
 import { StatusBadge } from "@/components/status-badge";
 import { ModulePhoto } from "@/components/module-photo";
@@ -108,22 +109,22 @@ export function ListingBrowser({ type }: { type: ListingType }) {
 
       <form onSubmit={onSearch} className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <input className={fieldClass} name="q" defaultValue={q} placeholder="Search" aria-label="Search" />
-        <select className={fieldClass} name="category" defaultValue={category} aria-label="Category">
-          <option value="">All categories</option>
-          {meta.categories.map((item) => (
-            <option key={item} value={item}>
-              {item}
-            </option>
-          ))}
-        </select>
-        <select className={fieldClass} name="location" defaultValue={location} aria-label="Location">
-          <option value="">All towns</option>
-          {places.map((place) => (
-            <option key={place.id} value={place.name}>
-              {place.name}
-            </option>
-          ))}
-        </select>
+        <ChoiceField
+          name="category"
+          options={[{ value: "", label: "All categories" }, ...choiceOptions(meta.categories)]}
+          defaultValue={category}
+          allowOther
+          placeholder="All categories"
+          ariaLabel="Category"
+        />
+        <ChoiceField
+          name="location"
+          options={[{ value: "", label: "All towns" }, ...places.map((place) => ({ value: place.name, label: place.name }))]}
+          defaultValue={location}
+          allowOther
+          placeholder="All towns"
+          ariaLabel="Location"
+        />
         <button type="submit" className={outlineClass}>
           Filter
         </button>

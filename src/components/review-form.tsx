@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 
 import { errorText, readApi } from "@/components/api-client";
+import { ChoiceField } from "@/components/choice-field";
 import { fieldClass, primaryClass } from "@/components/ui";
 
 export function ReviewForm({
@@ -50,13 +51,18 @@ export function ReviewForm({
   return (
     <form onSubmit={onSubmit} className="mt-2 grid gap-2">
       <p className="text-sm">Leave a review</p>
-      <select className={fieldClass} name="rating" defaultValue="5" aria-label="Rating">
-        <option value="5">5 stars</option>
-        <option value="4">4 stars</option>
-        <option value="3">3 stars</option>
-        <option value="2">2 stars</option>
-        <option value="1">1 star</option>
-      </select>
+      <ChoiceField
+        name="rating"
+        options={[
+          { value: "5", label: "5 stars" },
+          { value: "4", label: "4 stars" },
+          { value: "3", label: "3 stars" },
+          { value: "2", label: "2 stars" },
+          { value: "1", label: "1 star" },
+        ]}
+        defaultValue="5"
+        ariaLabel="Rating"
+      />
       <textarea className={fieldClass} name="comment" required minLength={5} rows={3} placeholder="How did the work go?" />
       {message ? (
         <p className="rounded-xl bg-danger-bg px-3 py-2 text-sm text-danger" role="alert">

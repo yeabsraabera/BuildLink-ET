@@ -30,7 +30,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
       className={`${inter.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full min-w-0 flex-col overflow-x-clip font-sans">
+      <body className="flex min-h-full min-w-0 flex-col font-sans">
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <ThemeSync />
         <Suspense fallback={<div className="h-14 bg-navy" />}>

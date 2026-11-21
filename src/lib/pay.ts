@@ -9,9 +9,8 @@ export function payLabel(details: Record<string, unknown>) {
   }
   const amount = Number(details.payAmount ?? details.salaryAmount);
   if (Number.isFinite(amount) && amount > 0) {
-    if (payType === "per day") return `${amount} ${currency} per day`;
-    if (payType === "per month") return `${amount} ${currency} per month`;
-    return `${amount} ${currency}`;
+    if (!payType || payType === "fixed fee") return `${amount} ${currency}`;
+    return `${amount} ${currency} ${payType}`;
   }
   return "Pay listed on the job";
 }

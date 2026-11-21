@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 
 import { errorText, readApi } from "@/components/api-client";
+import { ChoiceField } from "@/components/choice-field";
 import { fieldClass, linkClass, pageClass, primaryClass } from "@/components/ui";
 
 type Town = { id: string; name: string };
@@ -130,22 +131,31 @@ export default function EditProfilePage() {
             Name
             <input className={fieldClass} name="name" required defaultValue={profile.name} />
           </label>
-          <label className="grid gap-1 text-sm">
-            Town
-            <select className={fieldClass} name="town" required defaultValue={profile.town}>
-              {towns.map((town) => (
-                <option key={town.id}>{town.name}</option>
-              ))}
-            </select>
-          </label>
-          <label className="grid gap-1 text-sm">
-            Role
-            <select className={fieldClass} name="role" defaultValue={profile.role}>
-              <option value="contractor">Contractor</option>
-              <option value="employer">Employer</option>
-              <option value="both">Both</option>
-            </select>
-          </label>
+          <div className="grid gap-1 text-sm">
+            <span>Town</span>
+            <ChoiceField
+              name="town"
+              options={(towns.some((town) => town.name === profile.town) ? towns : [{ id: "current", name: profile.town }, ...towns]).map(
+                (town) => ({ value: town.name, label: town.name }),
+              )}
+              defaultValue={profile.town}
+              allowOther
+              ariaLabel="Town"
+            />
+          </div>
+          <div className="grid gap-1 text-sm">
+            <span>Role</span>
+            <ChoiceField
+              name="role"
+              options={[
+                { value: "contractor", label: "Contractor" },
+                { value: "employer", label: "Employer" },
+                { value: "both", label: "Both" },
+              ]}
+              defaultValue={profile.role}
+              ariaLabel="Role"
+            />
+          </div>
           <label className="grid gap-1 text-sm">
             Headline
             <input className={fieldClass} name="headline" defaultValue={profile.headline} />

@@ -3,9 +3,9 @@ import { unstable_rethrow } from "next/navigation";
 import { fail, ok, readJson, serverError, zodFail } from "@/lib/api";
 import { connectDB } from "@/lib/db";
 import { requireUser } from "@/lib/guards";
+import { ensureTown } from "@/lib/locations";
 import { publicProfile, ratingFor } from "@/lib/profile";
 import { profileSchema } from "@/lib/validators";
-import { Location } from "@/models/Location";
 import { User } from "@/models/User";
 
 export async function PATCH(request: Request) {
@@ -20,9 +20,9 @@ export async function PATCH(request: Request) {
     if (!user) return fail("Profile not found", 404);
 
     if (parsed.data.town) {
-      const town = await Location.findOne({ name: parsed.data.town, active: true });
-      if (!town) return fail("Choose a town from the location list", 400);
-      user.town = parsed.data.town;
+      const town = await ensureTown(parsed.data.town);
+      if (!town) return fail("Choose a town, or type one under Other", 400);
+      user.town = town.name;
     }
     if (parsed.data.name) user.name = parsed.data.name;
     if (parsed.data.role) user.role = parsed.data.role;

@@ -7,8 +7,9 @@ function isPublicPage(pathname: string) {
   return pathname === "/" || pathname === "/login" || pathname === "/register";
 }
 
-function isPublicApi(pathname: string) {
-  return pathname.startsWith("/api/auth/") || pathname === "/api/locations" || pathname === "/api/stats";
+function isPublicApi(pathname: string, method: string) {
+  if (pathname.startsWith("/api/auth/") || pathname === "/api/stats") return true;
+  return pathname === "/api/locations" && method === "GET";
 }
 
 async function hasSession(request: NextRequest) {
@@ -23,12 +24,17 @@ async function hasSession(request: NextRequest) {
   }
 }
 
+function isStaticAsset(pathname: string) {
+  return /\.(?:jpg|jpeg|png|gif|webp|svg|ico|txt|xml|woff2?)$/i.test(pathname);
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  if (isStaticAsset(pathname)) return NextResponse.next();
   const signedIn = await hasSession(request);
 
   if (pathname.startsWith("/api/")) {
-    if (signedIn || isPublicApi(pathname)) return NextResponse.next();
+    if (signedIn || isPublicApi(pathname, request.method)) return NextResponse.next();
     return NextResponse.json({ success: false, message: "Sign in required" }, { status: 401 });
   }
 

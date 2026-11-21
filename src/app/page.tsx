@@ -110,15 +110,22 @@ async function LiveHome() {
 
   return (
     <>
-      <section className="mx-auto mt-12 grid max-w-6xl grid-cols-2 gap-3 px-4 md:grid-cols-4">
-        <Stat label="Open jobs" value={stats.jobs} />
-        <Stat label="Contractors" value={stats.contractors} />
-        <Stat label="Materials" value={stats.materials} />
-        <Stat label="Equipment" value={stats.equipment} />
+      <section className="mx-auto mt-12 max-w-6xl px-4">
+        <SectionIntro
+          kicker="Right now"
+          title="What is open today"
+          text="A live count from the Jimma pilot. New visitors can see the work, the people, and the materials before they create an account."
+        />
+        <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
+          <Stat label="Open jobs" value={stats.jobs} tone="bg-stat-job text-stat-job-ink" />
+          <Stat label="Contractors" value={stats.contractors} tone="bg-stat-crew text-stat-crew-ink" />
+          <Stat label="Materials" value={stats.materials} tone="bg-stat-material text-stat-material-ink" />
+          <Stat label="Equipment" value={stats.equipment} tone="bg-stat-gear text-stat-gear-ink" />
+        </div>
       </section>
 
       <section className="mx-auto mt-14 max-w-6xl px-4">
-        <h2 className="text-2xl">Featured contractors</h2>
+        <SectionIntro kicker="People" title="Featured contractors" text="Masons, electricians, and site engineers with a trade, a town, and reviews from finished work." />
         {contractors.length === 0 ? (
           <p className="mt-3 text-sm text-muted">No contractor profiles are public yet.</p>
         ) : (
@@ -162,18 +169,24 @@ async function LiveHome() {
       </section>
 
       <section className="mx-auto mt-14 max-w-6xl px-4">
-        <h2 className="text-2xl">Latest jobs</h2>
+        <SectionIntro
+          kicker="Work"
+          title="Latest jobs"
+          text="New roles from employers around Jimma and nearby towns. Open a job to see the work, the pay, and how to apply."
+        />
         {jobs.length === 0 ? (
-          <p className="mt-3 text-sm text-muted">No open jobs yet.</p>
+          <p className="mt-5 text-sm text-muted">No open jobs yet. Check back after an employer posts.</p>
         ) : (
           <ul className="mt-5 grid gap-3">
             {jobs.map((job) => (
               <li key={job.id}>
-                <Link href={`/jobs/${job.id}`} className="block rounded-xl border border-line bg-card p-4 hover:bg-page">
-                  <p>{job.title}</p>
-                  <p className="mt-1 text-sm text-muted">
-                    {job.town} · {job.pay} · {job.employmentType}
-                  </p>
+                <Link href={`/jobs/${job.id}`} className="block rounded-xl border border-line bg-card p-5 hover:border-accent">
+                  <p className="text-lg">{job.title}</p>
+                  <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                    <span className="rounded-md bg-page px-2 py-1">{job.town}</span>
+                    <span className="rounded-md bg-stat-job px-2 py-1 text-stat-job-ink">{job.pay}</span>
+                    <span className="rounded-md border border-line px-2 py-1">{job.employmentType}</span>
+                  </div>
                 </Link>
               </li>
             ))}
@@ -182,38 +195,49 @@ async function LiveHome() {
       </section>
 
       <section id="how-it-works" className="mx-auto mt-16 max-w-6xl px-4">
-        <h2 className="text-2xl">How it works</h2>
+        <SectionIntro
+          kicker="Start here"
+          title="How it works"
+          text="New to the site? Three steps take you from a new account to a hired crew."
+        />
         <ol className="mt-5 grid gap-4 md:grid-cols-3">
-          <li className="rounded-xl border border-line bg-card p-4">
-            <p className="text-sm text-muted">1</p>
-            <h3 className="mt-1 text-lg">Create an account</h3>
-            <p className="mt-2 text-sm leading-6 text-muted">One login for jobs, materials, rentals, and professionals.</p>
+          <li className="rounded-xl border border-line bg-card p-5">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-stat-job text-stat-job-ink">1</span>
+            <h3 className="mt-4 text-lg">Create an account</h3>
+            <p className="mt-2 text-sm leading-6 text-muted">One login covers jobs, materials, rentals, and professionals.</p>
           </li>
-          <li className="rounded-xl border border-line bg-card p-4">
-            <p className="text-sm text-muted">2</p>
-            <h3 className="mt-1 text-lg">Post or apply</h3>
-            <p className="mt-2 text-sm leading-6 text-muted">Employers describe the work and the pay. Contractors send a cover message.</p>
+          <li className="rounded-xl border border-line bg-card p-5">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-stat-crew text-stat-crew-ink">2</span>
+            <h3 className="mt-4 text-lg">Post or apply</h3>
+            <p className="mt-2 text-sm leading-6 text-muted">Employers spell out the work and the pay. Contractors reply with a cover message.</p>
           </li>
-          <li className="rounded-xl border border-line bg-card p-4">
-            <p className="text-sm text-muted">3</p>
-            <h3 className="mt-1 text-lg">Hire and review</h3>
-            <p className="mt-2 text-sm leading-6 text-muted">After an accepted job, both sides can leave a rating.</p>
+          <li className="rounded-xl border border-line bg-card p-5">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-stat-gear text-stat-gear-ink">3</span>
+            <h3 className="mt-4 text-lg">Hire and review</h3>
+            <p className="mt-2 text-sm leading-6 text-muted">After a job is accepted, both sides can leave a rating.</p>
           </li>
         </ol>
       </section>
 
       <section className="mx-auto mt-14 max-w-6xl px-4">
-        <h2 className="text-2xl">Who it is for</h2>
+        <SectionIntro
+          kicker="Welcome"
+          title="Who it is for"
+          text="BuildLink ET is for people already working on sites in Southwest Ethiopia."
+        />
         <div className="mt-5 grid gap-4 md:grid-cols-3">
-          <p className="rounded-xl border border-line bg-card p-4 text-sm leading-6">
-            Contractors looking for site work in Jimma, Agaro, Bedele, Mettu, and Bonga.
-          </p>
-          <p className="rounded-xl border border-line bg-card p-4 text-sm leading-6">
-            Employers who need a mason, electrician, or site engineer without a long search.
-          </p>
-          <p className="rounded-xl border border-line bg-card p-4 text-sm leading-6">
-            Crews with surplus materials or idle mixers who want them used on the next job.
-          </p>
+          <article className="overflow-hidden rounded-xl border border-line bg-card">
+            <p className="bg-stat-job px-4 py-2 text-sm text-stat-job-ink">Contractors</p>
+            <p className="p-4 text-sm leading-6">Looking for site work in Jimma, Agaro, Bedele, Mettu, or Bonga.</p>
+          </article>
+          <article className="overflow-hidden rounded-xl border border-line bg-card">
+            <p className="bg-stat-crew px-4 py-2 text-sm text-stat-crew-ink">Employers</p>
+            <p className="p-4 text-sm leading-6">Need a mason, electrician, or site engineer without a long search.</p>
+          </article>
+          <article className="overflow-hidden rounded-xl border border-line bg-card">
+            <p className="bg-stat-gear px-4 py-2 text-sm text-stat-gear-ink">Crews</p>
+            <p className="p-4 text-sm leading-6">Have surplus materials or an idle mixer you want used on the next job.</p>
+          </article>
         </div>
       </section>
 
@@ -240,11 +264,21 @@ async function LiveHome() {
   );
 }
 
-function Stat({ label, value }: { label: string; value: number }) {
+function SectionIntro({ kicker, title, text }: { kicker: string; title: string; text: string }) {
   return (
-    <div className="rounded-xl border border-line bg-card p-4">
-      <p className="text-sm text-muted">{label}</p>
-      <p className="mt-1 text-2xl">{value}</p>
+    <div className="max-w-2xl">
+      <p className="text-sm text-accent">{kicker}</p>
+      <h2 className="mt-1 text-2xl">{title}</h2>
+      <p className="mt-2 text-sm leading-6 text-muted">{text}</p>
+    </div>
+  );
+}
+
+function Stat({ label, value, tone }: { label: string; value: number; tone: string }) {
+  return (
+    <div className={`rounded-xl p-4 ${tone}`}>
+      <p className="text-sm">{label}</p>
+      <p className="mt-2 text-3xl">{value}</p>
     </div>
   );
 }

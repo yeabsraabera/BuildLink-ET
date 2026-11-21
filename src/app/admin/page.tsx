@@ -133,7 +133,8 @@ export default function AdminPage() {
 
   async function addLocation(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
     const response = await fetch("/api/admin/locations", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -149,7 +150,7 @@ export default function AdminPage() {
       return;
     }
     setMessage("Town added.");
-    event.currentTarget.reset();
+    formElement.reset();
     load();
   }
 

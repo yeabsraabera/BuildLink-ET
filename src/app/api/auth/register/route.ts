@@ -3,8 +3,8 @@ import { unstable_rethrow } from "next/navigation";
 import { created, fail, isDuplicateKey, readJson, serverError, zodFail } from "@/lib/api";
 import { hashPassword, setAuthCookie, signAuthToken, toSessionUser } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
+import { ensureTown } from "@/lib/locations";
 import { registerSchema } from "@/lib/validators";
-import { Location } from "@/models/Location";
 import { User } from "@/models/User";
 
 export async function POST(request: Request) {
@@ -16,8 +16,8 @@ export async function POST(request: Request) {
     if (!parsed.success) return zodFail(parsed.error);
 
     await connectDB();
-    const town = await Location.findOne({ name: parsed.data.town, active: true });
-    if (!town) return fail("Choose a town from the location list", 400);
+    const town = await ensureTown(parsed.data.town);
+    if (!town) return fail("Choose a town, or type one under Other", 400);
 
     const existing = await User.findOne({ email: parsed.data.email });
     if (existing) return fail("An account with this email already exists", 409);

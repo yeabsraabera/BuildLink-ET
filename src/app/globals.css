@@ -4,17 +4,25 @@
 
 :root {
   color-scheme: light;
-  --background: #f3eadc;
-  --card: #fffaf4;
-  --foreground: #1c2a3a;
-  --muted: #6d5c4e;
-  --line: #e3d3c0;
+  --background: #f7f2eb;
+  --card: #fffdfb;
+  --foreground: #241c18;
+  --muted: #6e6258;
+  --line: #e4d8cc;
   --accent: #e07a3d;
   --accent-hover: #c45e2a;
   --accent-ink: #fffaf4;
-  --navy: #1e3348;
-  --page: #f3eadc;
+  --navy: #241c18;
+  --page: #f7f2eb;
   --teal: #1f6f78;
+  --stat-job: #e07a3d;
+  --stat-job-ink: #fffaf4;
+  --stat-crew: #1f6f78;
+  --stat-crew-ink: #fffaf4;
+  --stat-material: #241c18;
+  --stat-material-ink: #f7f2eb;
+  --stat-gear: #3d6b4f;
+  --stat-gear-ink: #f7f2eb;
   --success: #1d6b3a;
   --success-bg: #e7f5ec;
   --danger: #9f2d2d;
@@ -34,6 +42,14 @@
   --navy: #241c18;
   --page: #1c1815;
   --teal: #9fd4ce;
+  --stat-job: #e8894a;
+  --stat-job-ink: #1c1815;
+  --stat-crew: #1f6f78;
+  --stat-crew-ink: #f6efe6;
+  --stat-material: #3a312a;
+  --stat-material-ink: #f6efe6;
+  --stat-gear: #2f6b4a;
+  --stat-gear-ink: #f6efe6;
   --success: #b7e0c4;
   --success-bg: #24382c;
   --danger: #f0c2bc;
@@ -53,12 +69,29 @@
   --color-navy: var(--navy);
   --color-page: var(--page);
   --color-teal: var(--teal);
+  --color-stat-job: var(--stat-job);
+  --color-stat-job-ink: var(--stat-job-ink);
+  --color-stat-crew: var(--stat-crew);
+  --color-stat-crew-ink: var(--stat-crew-ink);
+  --color-stat-material: var(--stat-material);
+  --color-stat-material-ink: var(--stat-material-ink);
+  --color-stat-gear: var(--stat-gear);
+  --color-stat-gear-ink: var(--stat-gear-ink);
   --color-success: var(--success);
   --color-success-bg: var(--success-bg);
   --color-danger: var(--danger);
   --color-danger-bg: var(--danger-bg);
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
+
+.bg-stat-job { background-color: var(--stat-job); }
+.text-stat-job-ink { color: var(--stat-job-ink); }
+.bg-stat-crew { background-color: var(--stat-crew); }
+.text-stat-crew-ink { color: var(--stat-crew-ink); }
+.bg-stat-material { background-color: var(--stat-material); }
+.text-stat-material-ink { color: var(--stat-material-ink); }
+.bg-stat-gear { background-color: var(--stat-gear); }
+.text-stat-gear-ink { color: var(--stat-gear-ink); }
 
 body {
   background: var(--background);
