@@ -1,0 +1,45 @@
+---
+description: BuildLink ET project rules
+alwaysApply: true
+---
+# BuildLink ET: HACKATHON MVP (about 20 hours). Simplest working solution always wins.
+
+Platform for the construction industry in Southwest Ethiopia (pilot: Jimma). One shared account, four modules: Jobs, Materials, Rentals, Professionals, plus minimal Admin. `reference-prototype.html` is the UI/logic reference (a localStorage prototype). Port its behavior, not its code.
+
+## Stack (do not deviate)
+Next.js App Router, TypeScript, Tailwind, Route Handlers only (no Express), MongoDB + Mongoose, bcryptjs, JWT in httpOnly cookie (`jose`), zod on every API input. No file uploads (optional image URL text field). Secrets in .env.local; commit .env.example.
+
+## Architecture decisions
+- ONE `Listing` model and ONE `/api/listings?type=job|material|rental|professional`. Type-specific fields live in `details`, validated by a zod discriminated union on `type`.
+- ONE `Request` model and ONE `/api/requests` (type, listing, from, to, message, startDate?, endDate?, quantity?, status). Support `?box=incoming|outgoing`. Listings support `?mine=true`.
+- Per-type status rules live in one config map (`src/lib/status.ts`), not scattered if/else.
+- User, Report, AdminLog, Location models. Locations are configurable (seed: Jimma, Agaro, Bedele, Mettu, Bonga).
+- Shared helpers: `lib/db.ts`, `lib/auth.ts`, `lib/api.ts` (response helpers), `lib/validators.ts`. Reuse them everywhere.
+- API format: `{success:true,message,data}` or `{success:false,message,errors?}`. Use status codes 200/201/400/401/403/404/409.
+- Browse supports `q`, `category`, `location`, `page`, `limit`.
+
+## Status flows
+- Listing: job Open/Closed/Filled; material Available/Reserved/Sold; rental Available/Paused; professional Active/Paused; any Removed. Hide Sold/Closed/Filled/Paused/Removed from public browse.
+- Request: job Submitted→Under review→Shortlisted→Interview requested→Accepted/Rejected; material New→Responded→Negotiating→Agreed/Declined→Completed (Agreed makes listing Reserved, Completed makes it Sold); professional New→Responded→Accepted/Declined; rental Requested→Approved/Rejected→Returned. Requester may Withdraw any non-final request.
+
+## Server-enforced rules
+- Only the owner edits, deletes or changes status of a listing. PATCH whitelists fields (never owner, never verification, never arbitrary status).
+- Only the request's `to` user sets owner-side statuses; only `from` can Withdraw.
+- Cannot request or apply on your own listing. A partial unique index stops duplicate active applications to the same job.
+- Rental approval returns 409 if another Approved request for the same listing overlaps. endDate must be on or after startDate.
+- Professional verification: owner can only set `pending`; only admin sets `verified` or `rejected`.
+- Every admin route checks isAdmin on the server and writes an AdminLog entry. Admin reports resolve at `api/admin/reports/[id]/route.ts`.
+- Public responses populate owner with ONLY name and town. Never expose email or passwordHash.
+- Also needed: `GET /api/auth/me`, `GET /api/locations`, `POST /api/admin/locations`, `GET /api/admin/stats`.
+
+## UI
+Responsive, warm earthy palette (terracotta accent), shared navbar, loading/empty/error states, light and dark mode. Pages: `/`, `/login`, `/register`, `/jobs`, `/materials`, `/rentals`, `/professionals`, a detail page per module with the apply/inquiry/request form, `/dashboard`, `/admin`.
+
+## Honesty
+No fake payments, escrow, insurance or official verification. Footer says this is a prototype. Material pages say BuildLink ET has not inspected items. Never show private contact details.
+
+## OUT OF SCOPE (do not add, tell me instead)
+Reviews, favorites, maps, AI features, email/SMS, file uploads, chat, payments, multi-language, tests beyond a few key API checks.
+
+## Working style
+Build in phases and stop after each. The app must stay runnable after every phase. Keep code simple and readable. If tempted to add something not listed, skip it and mention it.

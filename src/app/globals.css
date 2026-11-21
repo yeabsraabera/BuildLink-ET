@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+  --background: #f4efe6;
+  --surface: #fffaf4;
+  --foreground: #2a2118;
+  --muted: #6f6256;
+  --line: #e4d8c8;
+  --accent: #c45c26;
+  --accent-hover: #9a4318;
+  --accent-ink: #fffaf4;
+  --footer: #3d2b22;
+  --footer-ink: #f6efe6;
+  --danger: #8a3418;
+  --danger-bg: #f6e4d8;
+}
+
+.dark {
+  color-scheme: dark;
+  --background: #1b1612;
+  --surface: #261f1a;
+  --foreground: #f6efe6;
+  --muted: #cbbbaa;
+  --line: #3d322a;
+  --accent: #e07a3d;
+  --accent-hover: #c45c26;
+  --accent-ink: #1b1612;
+  --footer: #120e0c;
+  --footer-ink: #f6efe6;
+  --danger: #f0c2a4;
+  --danger-bg: #3a241c;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-ink: var(--accent-ink);
+  --color-footer: var(--footer);
+  --color-footer-ink: var(--footer-ink);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --font-sans: var(--font-source);
+  --font-display: var(--font-fraunces);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-source), "Segoe UI", sans-serif;
+}
