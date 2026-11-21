@@ -132,3 +132,19 @@ export function assertRequestStatus(type: string, status: string) {
     throw new Error(`Status "${status}" is not valid for a ${type} request`);
   }
 }
+
+export function requestActorMaySet(
+  type: ListingType,
+  current: string,
+  next: string,
+  actor: "from" | "to",
+) {
+  if (!isAllowedRequestStatus(type, next) || isFinalRequestStatus(type, current)) return false;
+  if (next === requesterWithdrawStatus) return actor === "from";
+  if (actor !== "to") return false;
+  return (requestStatus[type].ownerSets as readonly string[]).includes(next);
+}
+
+export function listingStatusAfterRequest(type: ListingType, next: string) {
+  return requestStatus[type].listingEffects?.[next] ?? null;
+}

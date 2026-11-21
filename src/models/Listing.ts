@@ -24,6 +24,14 @@ const listingSchema = new Schema(
 );
 
 listingSchema.index({ seedKey: 1 }, { unique: true, sparse: true });
+listingSchema.index(
+  { owner: 1 },
+  {
+    unique: true,
+    name: "one_professional_profile",
+    partialFilterExpression: { type: "professional", status: { $in: ["Active", "Paused"] } },
+  },
+);
 listingSchema.index({ type: 1, status: 1, location: 1 });
 listingSchema.index({ owner: 1, type: 1 });
 listingSchema.index({ category: 1 });

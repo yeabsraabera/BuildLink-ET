@@ -145,5 +145,69 @@ export const requestWriteSchema = z
     }
   });
 
+export const listingPatchSchema = z
+  .object({
+    title: titleField.optional(),
+    description: descriptionField.optional(),
+    category: categoryField.optional(),
+    locationId: locationIdField.optional(),
+    imageUrl: z
+      .string()
+      .trim()
+      .refine((value) => value === "" || /^https?:\/\//.test(value), {
+        message: "Image URL must start with http:// or https://",
+      })
+      .optional(),
+    details: z.unknown().optional(),
+    status: z.string().trim().min(1).optional(),
+  })
+  .strict();
+
+export const requestStatusSchema = z
+  .object({
+    status: z.string().trim().min(1),
+  })
+  .strict();
+
+export const reportSchema = z
+  .object({
+    listingId: locationIdField,
+    reason: z.string().trim().min(5, "Say a little more about the report").max(500),
+  })
+  .strict();
+
+export const adminLocationSchema = z
+  .object({
+    name: z.string().trim().min(2).max(80),
+    region: z.string().trim().min(2).max(80),
+    zone: z.string().trim().min(2).max(80),
+  })
+  .strict();
+
+export const adminReportSchema = z
+  .object({
+    status: z.literal("resolved"),
+  })
+  .strict();
+
+export const adminVerificationSchema = z
+  .object({
+    listingId: locationIdField,
+    verification: z.enum(["verified", "rejected"]),
+  })
+  .strict();
+
+export const ownerVerificationSchema = z
+  .object({
+    verification: z.literal("pending"),
+  })
+  .strict();
+
+export const adminRemoveSchema = z
+  .object({
+    status: z.literal("Removed"),
+  })
+  .strict();
+
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
