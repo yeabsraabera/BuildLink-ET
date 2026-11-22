@@ -192,8 +192,9 @@ export function ListingDetail({ type, id }: { type: ListingType; id: string }) {
       </Link>
       {state === "loading" ? (
         <div className="mt-6" aria-busy="true">
-          <div className="h-4 w-40 rounded-md bg-card" />
-          <div className="mt-3 h-8 w-2/3 rounded-md bg-card" />
+          <div className="h-4 w-40 animate-pulse rounded-md bg-line" />
+          <div className="mt-3 h-8 w-2/3 animate-pulse rounded-md bg-line" />
+          <div className="mt-4 h-24 animate-pulse rounded-md bg-line" />
           <p className="sr-only">Loading...</p>
         </div>
       ) : null}

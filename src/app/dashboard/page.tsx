@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { errorText, readApi } from "@/components/api-client";
+import { EmptyState } from "@/components/empty-state";
 import type { ListingCard, RequestCard } from "@/components/listing-types";
 import { ReviewForm } from "@/components/review-form";
+import { CardSkeleton } from "@/components/skeleton";
 import { StatusBadge } from "@/components/status-badge";
 import { ModulePhoto } from "@/components/module-photo";
 import { linkClass, outlineClass, pageClass, primaryClass } from "@/components/ui";
@@ -120,7 +122,16 @@ export default function DashboardPage() {
           </span>
         </Link>
       </div>
-      {state === "loading" ? <p className="mt-6 text-sm text-muted">Loading your dashboard...</p> : null}
+      {state === "loading" ? (
+        <ul className="mt-6 grid gap-3" aria-busy="true">
+          {Array.from({ length: 3 }, (_, index) => (
+            <li key={index}>
+              <CardSkeleton />
+            </li>
+          ))}
+          <li className="sr-only">Loading your dashboard...</li>
+        </ul>
+      ) : null}
       {state === "error" ? (
         <div className="mt-6 rounded-xl border border-line bg-card p-6">
           <p className="text-sm text-danger" role="alert">
@@ -147,7 +158,9 @@ export default function DashboardPage() {
             <p className="mt-2 text-sm text-muted">
               Applications and inquiries from other people land here, with their name and town. You can accept, decline, or mark them responded. Private phone numbers and emails stay hidden.
             </p>
-            {incoming.length === 0 ? <p className="mt-2 text-sm">No one has contacted you yet.</p> : null}
+            {incoming.length === 0 ? (
+              <EmptyState title="No offers yet" text="When someone applies or asks about your listing, it will show up here." />
+            ) : null}
             <ul className="mt-3 grid gap-3">
               {incoming.map((item) => (
                 <RequestRow key={item.id} item={item} onStatus={setRequestStatus} />
@@ -159,7 +172,9 @@ export default function DashboardPage() {
             <p className="mt-2 text-sm text-muted">
               Jobs you applied for, questions you sent about materials, rental dates you asked for, and enquiries you sent to professionals. You can withdraw one while it is still open.
             </p>
-            {outgoing.length === 0 ? <p className="mt-2 text-sm">You have not sent a request yet.</p> : null}
+            {outgoing.length === 0 ? (
+              <EmptyState title="No applications yet" text="Jobs you apply for and questions you send will land in this list." />
+            ) : null}
             <ul className="mt-3 grid gap-3">
               {outgoing.map((item) => (
                 <RequestRow key={item.id} item={item} onStatus={setRequestStatus} />
@@ -171,7 +186,17 @@ export default function DashboardPage() {
             <p className="mt-2 text-sm text-muted">
               Everything you posted stays here. Edit the details, pause a listing, or take it down when the work is finished. Posting a job is the terracotta button above. Browsing open work is the teal one.
             </p>
-            {listings.length === 0 ? <p className="mt-2 text-sm">You have not posted anything yet.</p> : null}
+            {listings.length === 0 ? (
+              <EmptyState
+                title="No listings yet"
+                text="Post a job, leftover materials, equipment, or your professional profile to see it here."
+                action={
+                  <Link href="/jobs/new" className={primaryClass}>
+                    Post a job
+                  </Link>
+                }
+              />
+            ) : null}
             <ul className="mt-3 grid gap-3">
               {listings.map((item) => (
                 <li key={item.id} className="min-w-0 rounded-xl border border-line bg-card p-4">

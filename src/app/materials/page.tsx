@@ -1,10 +1,11 @@
 import { Suspense } from "react";
 
 import { ListingBrowser } from "@/components/listing-browser";
+import { ListingGridSkeleton } from "@/components/skeleton";
 
 export default function MaterialsPage() {
   return (
-    <Suspense fallback={<p className="mx-auto w-full max-w-5xl px-4 py-10">Loading materials...</p>}>
+    <Suspense fallback={<ListingGridSkeleton label="materials" />}>
       <ListingBrowser type="material" />
     </Suspense>
   );

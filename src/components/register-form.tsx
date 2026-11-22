@@ -5,16 +5,28 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 
 import { ChoiceField } from "@/components/choice-field";
+import { FieldError, fieldErrorMap } from "@/components/field-error";
+import { PasswordField } from "@/components/password-field";
 import { fieldClass, linkClass, primaryClass } from "@/components/ui";
 import type { TownOption } from "@/lib/locations";
 
 const inputClass = fieldClass;
+
+const roleOptions = [
+  { value: "contractor", label: "Contractor" },
+  { value: "employer", label: "Employer" },
+  { value: "both", label: "Both" },
+] as const;
 
 type ApiBody = {
   success: boolean;
   message: string;
   errors?: { path: string; message: string }[];
 };
+
+function defaultTown(towns: TownOption[]) {
+  return towns.find((item) => item.name === "Jimma")?.name ?? towns[0]?.name ?? "Jimma";
+}
 
 export function RegisterForm({
   nextPath = "/dashboard",
@@ -30,6 +42,7 @@ export function RegisterForm({
   const [townsError, setTownsError] = useState(initialError);
   const [loadingTowns, setLoadingTowns] = useState(initialTowns.length === 0 && !initialError);
   const [error, setError] = useState("");
+  const [fields, setFields] = useState<Record<string, string>>({});
   const [pending, setPending] = useState(false);
 
   useEffect(() => {
@@ -59,30 +72,52 @@ export function RegisterForm({
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
-    setPending(true);
     const form = new FormData(event.currentTarget);
+    const name = String(form.get("name") || "").trim();
+    const email = String(form.get("email") || "").trim();
+    const password = String(form.get("password") || "");
     const town = String(form.get("town") || "").trim();
-    if (town.length < 2) {
-      setError("Choose a town, or type one under Other");
-      setPending(false);
+    const role = String(form.get("role") || "").trim();
+    const phone = String(form.get("phone") || "").trim();
+    const nextFields: Record<string, string> = {};
+    if (name.length < 2) nextFields.name = "Name must be at least 2 characters";
+    if (!email) nextFields.email = "Enter a valid email";
+    if (password.length < 6) nextFields.password = "Password must be at least 6 characters";
+    if (role !== "contractor" && role !== "employer" && role !== "both") {
+      nextFields.role = "Choose a role";
+    }
+    if (town.length < 2) nextFields.town = "Choose a town, or type one under Other";
+    if (Object.keys(nextFields).length > 0) {
+      setFields(nextFields);
       return;
     }
+    setFields({});
+    setPending(true);
     try {
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: form.get("name"),
-          email: form.get("email"),
-          password: form.get("password"),
+          name,
+          email,
+          password,
           town,
-          phone: form.get("phone") || undefined,
+          phone: phone || undefined,
         }),
       });
       const body = (await response.json()) as ApiBody;
       if (!response.ok || !body.success) {
-        setError(body.errors?.[0]?.message || body.message || "Could not register");
+        const mapped = fieldErrorMap(body.errors);
+        setFields(mapped);
+        setError(Object.keys(mapped).length > 0 ? "" : body.message || "Could not register");
         return;
+      }
+      if (role === "contractor" || role === "employer" || role === "both") {
+        await fetch("/api/users/me", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ role }),
+        }).catch(() => undefined);
       }
       router.push(nextPath);
       router.refresh();
@@ -94,6 +129,7 @@ export function RegisterForm({
   }
 
   const loginHref = nextPath === "/dashboard" ? "/login" : `/login?next=${encodeURIComponent(nextPath)}`;
+  const townValue = defaultTown(towns);
 
   return (
     <form onSubmit={onSubmit} className="grid gap-4" noValidate>
@@ -104,35 +140,62 @@ export function RegisterForm({
       ) : null}
       <label className="grid min-w-0 gap-1 text-sm">
         Name
-        <input className={inputClass} name="name" autoComplete="name" required placeholder="Your name" />
+        <input
+          className={inputClass}
+          name="name"
+          autoComplete="name"
+          required
+          placeholder="Your name"
+          aria-invalid={fields.name ? true : undefined}
+          aria-describedby={fields.name ? "name-error" : undefined}
+        />
+        <FieldError id="name-error" error={fields.name} />
       </label>
       <label className="grid min-w-0 gap-1 text-sm">
         Email
-        <input className={inputClass} name="email" type="email" autoComplete="email" required placeholder="you@example.com" />
-      </label>
-      <label className="grid min-w-0 gap-1 text-sm">
-        Password
         <input
           className={inputClass}
-          name="password"
-          type="password"
-          autoComplete="new-password"
-          minLength={6}
+          name="email"
+          type="email"
+          autoComplete="email"
           required
-          placeholder="At least 6 characters"
+          placeholder="you@example.com"
+          aria-invalid={fields.email ? true : undefined}
+          aria-describedby={fields.email ? "email-error" : undefined}
         />
+        <FieldError id="email-error" error={fields.email} />
       </label>
+      <PasswordField
+        name="password"
+        autoComplete="new-password"
+        minLength={6}
+        required
+        placeholder="At least 6 characters"
+        error={fields.password}
+      />
+      <div className="grid min-w-0 gap-1 text-sm">
+        <span>Role</span>
+        <ChoiceField
+          name="role"
+          options={roleOptions.map((item) => ({ value: item.value, label: item.label }))}
+          defaultValue=""
+          placeholder="Choose a role"
+          ariaLabel="Role"
+        />
+        <FieldError id="role-error" error={fields.role} />
+      </div>
       <div className="grid min-w-0 gap-1 text-sm">
         <span>Town</span>
         <ChoiceField
           key={towns.map((item) => item.id).join(",") || "towns"}
           name="town"
           options={towns.map((item) => ({ value: item.name, label: `${item.name}, ${item.region}` }))}
-          defaultValue={towns[0]?.name ?? ""}
+          defaultValue={townValue}
           allowOther
           placeholder={loadingTowns ? "Loading towns..." : "Choose a town"}
           ariaLabel="Town"
         />
+        <FieldError id="town-error" error={fields.town} />
         {townsError ? (
           <span className="text-danger">
             {townsError}{" "}
@@ -145,6 +208,7 @@ export function RegisterForm({
       <label className="grid min-w-0 gap-1 text-sm">
         Phone (optional)
         <input className={inputClass} name="phone" type="tel" autoComplete="tel" placeholder="09..." />
+        <FieldError id="phone-error" error={fields.phone} />
       </label>
       <button type="submit" disabled={pending} className={`${primaryClass} w-full`}>
         {pending ? "Creating account..." : "Create account"}

@@ -28,7 +28,16 @@ export function SiteFooter() {
           <Link href="/professionals" className="hover:text-accent">
             Professionals
           </Link>
+          <Link href="/login" className="hover:text-accent">
+            Log in
+          </Link>
+          <Link href="/register" className="hover:text-accent">
+            Sign up
+          </Link>
         </div>
+        <p className="text-sm leading-6 text-white/70 sm:col-span-2">
+          This is a prototype. Listings are not official verification, and the site does not take payments.
+        </p>
       </div>
     </footer>
   );

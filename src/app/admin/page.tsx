@@ -158,7 +158,14 @@ export default function AdminPage() {
     <div className={`${pageClass} py-8`}>
       <h1 className="text-2xl">Admin</h1>
       <p className="mt-2 text-sm text-muted">Review flags are not official licenses. BuildLink ET does not certify anyone.</p>
-      {state === "loading" ? <p className="mt-6 text-sm text-muted">Loading admin...</p> : null}
+      {state === "loading" ? (
+        <div className="mt-6 grid gap-3 sm:grid-cols-4" aria-busy="true">
+          {Array.from({ length: 8 }, (_, index) => (
+            <div key={index} className="h-20 animate-pulse rounded-xl bg-line" />
+          ))}
+          <p className="sr-only">Loading admin...</p>
+        </div>
+      ) : null}
       {state === "error" ? (
         <p className="mt-6 rounded-xl bg-danger-bg px-3 py-2 text-sm text-danger" role="alert">
           {message}

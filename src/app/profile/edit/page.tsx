@@ -124,7 +124,14 @@ export default function EditProfilePage() {
         Back to profile
       </Link>
       <h1 className="mt-3 text-2xl">Edit profile</h1>
-      {state === "loading" ? <p className="mt-4 text-sm text-muted">Loading...</p> : null}
+      {state === "loading" ? (
+        <div className="mt-4 grid gap-3" aria-busy="true">
+          <div className="h-10 animate-pulse rounded-xl bg-line" />
+          <div className="h-10 animate-pulse rounded-xl bg-line" />
+          <div className="h-24 animate-pulse rounded-xl bg-line" />
+          <p className="sr-only">Loading...</p>
+        </div>
+      ) : null}
       {state === "error" ? (
         <p className="mt-4 rounded-xl bg-danger-bg px-3 py-2 text-sm text-danger" role="alert">
           {message}

@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { errorText, readApi } from "@/components/api-client";
+import { EmptyState } from "@/components/empty-state";
+import { CardSkeleton } from "@/components/skeleton";
 import { linkClass, outlineClass, pageClass } from "@/components/ui";
 import { paymentMethodById } from "@/lib/payments";
 
@@ -65,7 +67,12 @@ export function ProfileView({ userId }: { userId: string }) {
 
   return (
     <div className={`${pageClass} max-w-3xl py-8`}>
-      {state === "loading" ? <p className="text-sm text-muted">Loading profile...</p> : null}
+      {state === "loading" ? (
+        <div aria-busy="true">
+          <CardSkeleton />
+          <p className="sr-only">Loading profile...</p>
+        </div>
+      ) : null}
       {state === "error" ? (
         <p className="rounded-xl bg-danger-bg px-3 py-2 text-sm text-danger" role="alert">
           {message}
@@ -117,7 +124,7 @@ export function ProfileView({ userId }: { userId: string }) {
               Ways {profile.isSelf ? "you" : profile.name} can be paid. BuildLink ET does not collect the money.
             </p>
             {profile.paymentMethods.length === 0 ? (
-              <p className="mt-2 text-sm">No payment methods listed yet.</p>
+              <EmptyState title="No payment methods yet" text="These are labels only. BuildLink ET does not collect money." />
             ) : (
               <ul className="mt-3 grid gap-2 sm:grid-cols-2">
                 {profile.paymentMethods.map((id) => {
@@ -136,7 +143,9 @@ export function ProfileView({ userId }: { userId: string }) {
 
           <section className="mt-8">
             <h2 className="text-xl">Experience</h2>
-            {profile.experience.length === 0 ? <p className="mt-2 text-sm text-muted">No experience listed yet.</p> : null}
+            {profile.experience.length === 0 ? (
+              <EmptyState title="No experience yet" text="Work history will show here once it is added to the profile." />
+            ) : null}
             <ol className="mt-3 grid gap-3">
               {profile.experience.map((item) => (
                 <li key={`${item.title}-${item.company}`} className="rounded-xl border border-line bg-card p-4">
@@ -168,7 +177,9 @@ export function ProfileView({ userId }: { userId: string }) {
 
           <section className="mt-8">
             <h2 className="text-xl">Reviews</h2>
-            {profile.reviews.length === 0 ? <p className="mt-2 text-sm text-muted">No reviews yet.</p> : null}
+            {profile.reviews.length === 0 ? (
+              <EmptyState title="No reviews yet" text="Ratings from finished jobs will appear here." />
+            ) : null}
             <ul className="mt-3 grid gap-3">
               {profile.reviews.map((review) => (
                 <li key={review.id} className="rounded-xl border border-line bg-card p-4">

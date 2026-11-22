@@ -1,10 +1,11 @@
 import { Suspense } from "react";
 
 import { ListingBrowser } from "@/components/listing-browser";
+import { ListingGridSkeleton } from "@/components/skeleton";
 
 export default function ProfessionalsPage() {
   return (
-    <Suspense fallback={<p className="mx-auto w-full max-w-5xl px-4 py-10">Loading professionals...</p>}>
+    <Suspense fallback={<ListingGridSkeleton label="professionals" />}>
       <ListingBrowser type="professional" />
     </Suspense>
   );

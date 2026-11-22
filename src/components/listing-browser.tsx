@@ -6,7 +6,9 @@ import { useEffect, useState, type FormEvent } from "react";
 
 import { errorText, readApi } from "@/components/api-client";
 import { ChoiceField, choiceOptions } from "@/components/choice-field";
+import { EmptyState } from "@/components/empty-state";
 import { detailText, type ListingCard, type LocationOption } from "@/components/listing-types";
+import { CardSkeleton } from "@/components/skeleton";
 import { StatusBadge } from "@/components/status-badge";
 import { ModulePhoto } from "@/components/module-photo";
 import { fieldClass, linkClass, outlineClass, pageClass, primaryClass } from "@/components/ui";
@@ -133,11 +135,8 @@ export function ListingBrowser({ type }: { type: ListingType }) {
       {state === "loading" ? (
         <ul className="mt-6 grid gap-3 sm:grid-cols-2" aria-busy="true">
           {Array.from({ length: 4 }, (_, index) => (
-            <li key={index} className="rounded-xl border border-line bg-card p-4">
-              <div className="h-7 w-7 rounded-md bg-background" />
-              <div className="mt-3 h-4 w-2/3 rounded-md bg-background" />
-              <div className="mt-2 h-3 w-1/2 rounded-md bg-background" />
-              <div className="mt-2 h-3 w-1/3 rounded-md bg-background" />
+            <li key={index}>
+              <CardSkeleton />
             </li>
           ))}
           <li className="sr-only">Loading {meta.title.toLowerCase()}...</li>
@@ -149,13 +148,15 @@ export function ListingBrowser({ type }: { type: ListingType }) {
         </p>
       ) : null}
       {state === "ready" && items.length === 0 ? (
-        <div className="mt-8 rounded-xl border border-line bg-card p-6">
-          <p className="text-base">Nothing matches yet</p>
-          <p className="mt-1 text-sm text-muted">{meta.empty}</p>
-          <Link href={signedIn ? `${meta.path}/new` : "/login"} className={`${primaryClass} mt-4`}>
-            {signedIn ? meta.post : "Log in to post"}
-          </Link>
-        </div>
+        <EmptyState
+          title="Nothing matches yet"
+          text={meta.empty}
+          action={
+            <Link href={signedIn ? `${meta.path}/new` : "/login"} className={primaryClass}>
+              {signedIn ? meta.post : "Log in to post"}
+            </Link>
+          }
+        />
       ) : null}
       {state === "ready" && items.length > 0 ? (
         <ul className="mt-6 grid gap-3 sm:grid-cols-2">

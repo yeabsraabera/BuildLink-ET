@@ -3,7 +3,7 @@ import { Suspense } from "react";
 
 import { AuthFrame } from "@/components/auth-frame";
 import { LoginForm } from "@/components/login-form";
-import { safeNextPath } from "@/lib/paths";
+import { continuePageLabel, safeNextPath } from "@/lib/paths";
 
 export const metadata: Metadata = { title: "Login" };
 
@@ -19,5 +19,11 @@ export default function LoginPage({ searchParams }: { searchParams: Promise<{ ne
 
 async function LoginFormLoader({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
   const params = await searchParams;
-  return <LoginForm nextPath={safeNextPath(params.next)} />;
+  const nextPath = safeNextPath(params.next);
+  return (
+    <LoginForm
+      nextPath={nextPath}
+      continueTo={params.next ? continuePageLabel(nextPath) : undefined}
+    />
+  );
 }

@@ -147,7 +147,14 @@ export function ListingForm({ type, mode, id }: { type: ListingType; mode: "crea
       {type === "material" ? (
         <p className="mt-2 text-sm text-muted">BuildLink ET has not inspected items. Describe the condition honestly.</p>
       ) : null}
-      {state === "loading" ? <p className="mt-6 text-muted">Loading form...</p> : null}
+      {state === "loading" ? (
+        <div className="mt-6 grid gap-3" aria-busy="true">
+          <div className="h-10 animate-pulse rounded-xl bg-line" />
+          <div className="h-24 animate-pulse rounded-xl bg-line" />
+          <div className="h-10 animate-pulse rounded-xl bg-line" />
+          <p className="sr-only">Loading form...</p>
+        </div>
+      ) : null}
       {state === "error" ? (
         <p className="mt-6 rounded-xl bg-danger-bg px-3 py-2 text-sm text-danger" role="alert">
           {message}{" "}

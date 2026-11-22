@@ -2,6 +2,7 @@ import { Suspense } from "react";
 
 import { ListingDetail } from "@/components/listing-detail";
 import { ListingForm } from "@/components/listing-form";
+import { CardSkeleton } from "@/components/skeleton";
 import type { ListingType } from "@/lib/status";
 
 export function ListingDetailRoute({
@@ -12,7 +13,13 @@ export function ListingDetailRoute({
   params: Promise<{ id: string }>;
 }) {
   return (
-    <Suspense fallback={<p className="mx-auto w-full max-w-3xl px-4 py-10">Loading...</p>}>
+    <Suspense
+      fallback={
+        <div className="mx-auto w-full max-w-3xl px-4 py-10">
+          <CardSkeleton />
+        </div>
+      }
+    >
       <ResolvedDetail type={type} params={params} />
     </Suspense>
   );
@@ -31,7 +38,13 @@ export function ListingEditRoute({
   params: Promise<{ id: string }>;
 }) {
   return (
-    <Suspense fallback={<p className="mx-auto w-full max-w-2xl px-4 py-10">Loading form...</p>}>
+    <Suspense
+      fallback={
+        <div className="mx-auto w-full max-w-2xl px-4 py-10">
+          <CardSkeleton />
+        </div>
+      }
+    >
       <ResolvedEdit type={type} params={params} />
     </Suspense>
   );

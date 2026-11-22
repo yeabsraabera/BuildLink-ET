@@ -77,7 +77,7 @@ export function SiteHeader() {
     <header className="bg-navy text-white">
       <div className="mx-auto flex min-w-0 max-w-6xl items-center gap-2 px-4 py-3">
         <BrandLogo className="h-20" />
-        <nav className="ml-4 hidden min-w-0 items-center gap-1 md:flex" aria-label="Site">
+        <nav className="ml-4 hidden min-w-0 items-center gap-1 lg:flex" aria-label="Site">
           <NavLink href="/" pathname={pathname} label="Home" exact />
           {modules.map((item) => (
             <NavLink
@@ -105,7 +105,7 @@ export function SiteHeader() {
           </div>
           <button
             type="button"
-            className="inline-flex h-10 w-10 flex-col items-center justify-center gap-1 rounded-xl border border-white/40 md:hidden"
+            className="inline-flex h-10 w-10 flex-col items-center justify-center gap-1 rounded-xl border border-white/40 lg:hidden"
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label="Menu"
@@ -118,7 +118,7 @@ export function SiteHeader() {
         </div>
       </div>
       {open ? (
-        <div id="mobile-nav" className="border-t border-white/20 px-4 py-3 md:hidden">
+        <div id="mobile-nav" className="border-t border-white/20 px-4 py-3 lg:hidden">
           <nav className="grid gap-1" aria-label="Site">
             <NavLink href="/" pathname={pathname} label="Home" exact />
             {modules.map((item) => (
