@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "tsx --env-file=.env.local src/scripts/seed.ts",
-    "demo:video": "tsx --env-file=.env.local scripts/record-demo.ts"
+    "demo:video": "tsx --env-file=.env.local scripts/record-demo.ts",
+    "demo:video:fast": "tsx --env-file=.env.local scripts/record-demo-fast.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
