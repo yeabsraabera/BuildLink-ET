@@ -5,10 +5,11 @@
  *   npm run dev
  *   npm run demo:video:fast
  *
- * Writes:
+ * Writes (light, default):
  *   demo/buildlink-et-demo-fast.mp4        (1280x720)
  *   demo/buildlink-et-demo-fast-1080.mp4   (1920x1080)
- * Never opens .env files in the browser.
+ * DEMO_THEME=dark writes buildlink-et-demo-dark-720.mp4 and -1080.mp4
+ * plus dark_*.png screenshots. Never opens .env files in the browser.
  */
 import { spawn } from "node:child_process";
 import { copyFileSync, mkdirSync, readdirSync, unlinkSync } from "node:fs";
@@ -30,21 +31,51 @@ const SEED_PASSWORD = "demo123";
 
 type Skip = { scene: string; reason: string };
 type Size = { width: number; height: number; file: string };
+type ThemeName = "dark" | "light";
 
-const SIZES: Size[] = [
-  { width: 1280, height: 720, file: "buildlink-et-demo-fast.mp4" },
-  { width: 1920, height: 1080, file: "buildlink-et-demo-fast-1080.mp4" },
-];
+const THEME: ThemeName = process.env.DEMO_THEME === "dark" ? "dark" : "light";
 
-const SCREENSHOTS = [
-  "demo_home_hero.png",
-  "demo_home_about_stats.png",
-  "demo_login.png",
-  "demo_register.png",
-  "demo_jobs.png",
-  "demo_job_detail.png",
-  "demo_dashboard_menu.png",
-] as const;
+const SIZES: Size[] =
+  THEME === "dark"
+    ? [
+        { width: 1280, height: 720, file: "buildlink-et-demo-dark-720.mp4" },
+        { width: 1920, height: 1080, file: "buildlink-et-demo-dark-1080.mp4" },
+      ]
+    : [
+        { width: 1280, height: 720, file: "buildlink-et-demo-fast.mp4" },
+        { width: 1920, height: 1080, file: "buildlink-et-demo-fast-1080.mp4" },
+      ];
+
+const SCREENSHOTS =
+  THEME === "dark"
+    ? ([
+        "dark_home_hero.png",
+        "dark_home_about_stats.png",
+        "dark_login.png",
+        "dark_register.png",
+        "dark_jobs.png",
+        "dark_job_detail.png",
+        "dark_dashboard_menu.png",
+      ] as const)
+    : ([
+        "demo_home_hero.png",
+        "demo_home_about_stats.png",
+        "demo_login.png",
+        "demo_register.png",
+        "demo_jobs.png",
+        "demo_job_detail.png",
+        "demo_dashboard_menu.png",
+      ] as const);
+
+function themeInitJs(theme: ThemeName) {
+  return `(() => {
+    try { localStorage.setItem("buildlink-theme", ${JSON.stringify(theme)}); } catch (e) {}
+    var root = document.documentElement;
+    root.setAttribute("data-theme", ${JSON.stringify(theme)});
+    root.classList.toggle("dark", ${theme === "dark"});
+    root.style.colorScheme = ${JSON.stringify(theme)};
+  })()`;
+}
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -138,6 +169,7 @@ async function waitPage(page: Page, overlay: string) {
     /* Next.js can keep a socket open in dev */
   }
   await page.evaluate(overlay);
+  await page.evaluate(themeInitJs(THEME));
 }
 
 async function go(page: Page, url: string, overlay: string) {
@@ -409,7 +441,7 @@ async function recordSize(size: Size) {
   const skipped: Skip[] = [];
   const overlay = overlayJs(size.height >= 1080 ? 18 : 15);
   const output = path.join(ROOT, "demo", size.file);
-  const workDir = path.join(WORK, `${size.width}x${size.height}`);
+  const workDir = path.join(WORK, `${THEME}-${size.width}x${size.height}`);
   mkdirSync(workDir, { recursive: true });
 
   const browser = await chromium.launch({
@@ -423,13 +455,7 @@ async function recordSize(size: Size) {
   const page = await context.newPage();
   page.setDefaultTimeout(12000);
   await page.addInitScript({ content: overlay });
-  await page.addInitScript(() => {
-    try {
-      localStorage.setItem("buildlink-theme", "light");
-    } catch {
-      /* ignore */
-    }
-  });
+  await page.addInitScript({ content: themeInitJs(THEME) });
 
   await runScene(page, overlay, worked, skipped, "1 landing", "Jobs, crews, materials and rentals in Southwest Ethiopia", 38_000, sceneLanding);
   await runScene(page, overlay, worked, skipped, "2 login", "Sign in to browse and apply", 24_000, sceneLogin);
@@ -458,16 +484,15 @@ async function captureScreenshots() {
   const page = await context.newPage();
   page.setDefaultTimeout(12000);
   await page.addInitScript({ content: HIDE_DEV_JS });
-  await page.addInitScript(() => {
-    try {
-      localStorage.setItem("buildlink-theme", "light");
-    } catch {
-      /* ignore */
-    }
-  });
+  await page.addInitScript({ content: themeInitJs(THEME) });
 
   async function snap(name: string) {
     await page.evaluate(HIDE_DEV_JS);
+    await page.evaluate(themeInitJs(THEME));
+    const applied = await page.evaluate(() => document.documentElement.getAttribute("data-theme"));
+    if (applied !== THEME) {
+      throw new Error(`Expected data-theme=${THEME} before ${name}, got ${applied}`);
+    }
     const dest = path.join(MEDIA, name);
     await page.screenshot({ path: dest, type: "png" });
     copyFileSync(dest, path.join(ARTIFACTS, name));
@@ -476,24 +501,24 @@ async function captureScreenshots() {
   await page.goto(`${BASE}/`, { waitUntil: "domcontentloaded" });
   await page.getByRole("heading", { name: /Build Smarter/ }).waitFor();
   await sleep(400);
-  await snap("demo_home_hero.png");
+  await snap(SCREENSHOTS[0]);
 
   await page.evaluate(`(() => {
     const el = Array.from(document.querySelectorAll("h2")).find(function (item) { return item.textContent && item.textContent.trim() === "About us"; });
     if (el) el.scrollIntoView({ block: "center" });
   })()`);
   await sleep(400);
-  await snap("demo_home_about_stats.png");
+  await snap(SCREENSHOTS[1]);
 
   await page.goto(`${BASE}/login`, { waitUntil: "domcontentloaded" });
   await page.getByRole("heading", { name: "Log in" }).waitFor();
   await sleep(300);
-  await snap("demo_login.png");
+  await snap(SCREENSHOTS[2]);
 
   await page.goto(`${BASE}/register`, { waitUntil: "domcontentloaded" });
   await page.getByRole("heading", { name: "Create an account" }).waitFor();
   await sleep(400);
-  await snap("demo_register.png");
+  await snap(SCREENSHOTS[3]);
 
   await page.goto(`${BASE}/login`, { waitUntil: "domcontentloaded" });
   await page.locator('input[name="email"]').fill("dawit@buildlink.et");
@@ -504,14 +529,14 @@ async function captureScreenshots() {
   await page.goto(`${BASE}/jobs`, { waitUntil: "domcontentloaded" });
   await page.getByRole("heading", { name: "Jobs" }).waitFor();
   await sleep(400);
-  await snap("demo_jobs.png");
+  await snap(SCREENSHOTS[4]);
 
   const job = page.getByRole("link", { name: /Junior site engineer/ }).first();
   if (await job.count()) await job.click();
   else await page.locator("main a").first().click();
   await page.waitForURL(/\/jobs\//, { timeout: 8000 });
   await sleep(500);
-  await snap("demo_job_detail.png");
+  await snap(SCREENSHOTS[5]);
 
   await page.goto(`${BASE}/dashboard`, { waitUntil: "domcontentloaded" });
   await page.getByRole("heading", { name: "Dashboard" }).waitFor();
@@ -519,7 +544,7 @@ async function captureScreenshots() {
   await menu.click();
   await page.getByRole("menuitem", { name: "My listings" }).waitFor();
   await sleep(250);
-  await snap("demo_dashboard_menu.png");
+  await snap(SCREENSHOTS[6]);
 
   await context.close();
   await browser.close();
