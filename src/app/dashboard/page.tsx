@@ -104,7 +104,7 @@ export default function DashboardPage() {
     <div className={`${pageClass} py-8`}>
       <h1 className="text-2xl">Dashboard</h1>
       <p className="mt-2 max-w-2xl text-sm text-muted">
-        This is your desk. Incoming requests are people reaching you. My requests are the ones you sent. My listings are the jobs, materials, equipment, and profiles you posted.
+        This is your desk. Notifications, offers, applications, and listings from your account are listed below.
       </p>
       <div className="mt-5 grid grid-cols-2 gap-3">
         <Link href="/jobs" className="rounded-xl bg-stat-crew px-4 py-4 text-stat-crew-ink">
@@ -138,8 +138,12 @@ export default function DashboardPage() {
       ) : null}
       {state === "ready" ? (
         <div className="mt-6 grid gap-8">
-          <section>
-            <h2 className="text-xl">Incoming requests</h2>
+          <section id="notifications" className="scroll-mt-24">
+            <h2 className="text-xl">Notifications</h2>
+            <p className="mt-2 text-sm">No one has contacted you yet.</p>
+          </section>
+          <section id="offers" className="scroll-mt-24">
+            <h2 className="text-xl">Offers</h2>
             <p className="mt-2 text-sm text-muted">
               Applications and inquiries from other people land here, with their name and town. You can accept, decline, or mark them responded. Private phone numbers and emails stay hidden.
             </p>
@@ -150,8 +154,8 @@ export default function DashboardPage() {
               ))}
             </ul>
           </section>
-          <section>
-            <h2 className="text-xl">My requests</h2>
+          <section id="applications" className="scroll-mt-24">
+            <h2 className="text-xl">My applications</h2>
             <p className="mt-2 text-sm text-muted">
               Jobs you applied for, questions you sent about materials, rental dates you asked for, and enquiries you sent to professionals. You can withdraw one while it is still open.
             </p>
@@ -162,7 +166,7 @@ export default function DashboardPage() {
               ))}
             </ul>
           </section>
-          <section>
+          <section id="listings" className="scroll-mt-24">
             <h2 className="text-xl">My listings</h2>
             <p className="mt-2 text-sm text-muted">
               Everything you posted stays here. Edit the details, pause a listing, or take it down when the work is finished. Posting a job is the terracotta button above. Browsing open work is the teal one.

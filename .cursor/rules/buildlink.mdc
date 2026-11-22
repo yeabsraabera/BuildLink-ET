@@ -46,7 +46,7 @@ Next.js App Router, TypeScript, Tailwind, Route Handlers only (no Express), Mong
 Responsive construction-company landing on `/`. Signed-in app pages: `/jobs`, `/materials`, `/rentals`, `/professionals`, a detail page per module with the apply/inquiry/request form, `/dashboard`, `/admin`, `/profile/[userId]`. Shared navbar, loading/empty/error states, light and dark mode.
 
 ## Honesty
-No checkout, escrow, insurance, or official verification. A profile may list accepted payment methods, and the copy says BuildLink ET does not collect the money. Never show an amount. Footer says this is a prototype. Material pages say BuildLink ET has not inspected items. Never show private contact details.
+No checkout, escrow, insurance, or official verification. A profile may list accepted payment methods, and the copy says BuildLink ET does not collect the money. Never show an amount. Do not describe the site as a prototype that takes payments, holds escrow, or officially verifies anyone. Material pages say BuildLink ET has not inspected items. Never show private contact details.
 
 ## OUT OF SCOPE (do not add, tell me instead)
 Favorites, maps, AI features, email/SMS, file uploads, chat, payment checkout, multi-language, tests beyond a few key API checks.

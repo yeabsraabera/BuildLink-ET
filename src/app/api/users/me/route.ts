@@ -29,7 +29,7 @@ export async function PATCH(request: Request) {
     if (parsed.data.headline !== undefined) user.headline = parsed.data.headline;
     if (parsed.data.bio !== undefined) user.bio = parsed.data.bio;
     if (parsed.data.skills) user.skills = parsed.data.skills;
-    if (parsed.data.experience) user.experience = parsed.data.experience;
+    if (parsed.data.experience) user.set("experience", parsed.data.experience);
     if (parsed.data.avatarUrl !== undefined) user.avatarUrl = parsed.data.avatarUrl || undefined;
     if (parsed.data.paymentMethods !== undefined) {
       user.set("paymentMethods", parsed.data.paymentMethods);

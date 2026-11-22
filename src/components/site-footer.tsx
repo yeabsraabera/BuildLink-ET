@@ -5,7 +5,7 @@ import { BrandLogo } from "@/components/brand-logo";
 export function SiteFooter() {
   return (
     <footer className="bg-navy text-white">
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:grid-cols-3">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:grid-cols-2">
         <div>
           <BrandLogo className="h-24" />
           <p className="mt-2 text-sm leading-6 text-white/75">
@@ -29,10 +29,6 @@ export function SiteFooter() {
             Professionals
           </Link>
         </div>
-        <p className="text-sm leading-6 text-white/75">
-          BuildLink ET is a prototype. It does not take payments, hold escrow, insure equipment, or officially
-          verify people, materials, or equipment.
-        </p>
       </div>
     </footer>
   );

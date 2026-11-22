@@ -8,7 +8,7 @@ type Experience = {
   title?: string;
   company?: string;
   years?: string;
-  description?: string;
+  description?: string | null;
 };
 
 export function publicProfile(
@@ -17,11 +17,11 @@ export function publicProfile(
     name: string;
     town: string;
     role?: string;
-    headline?: string;
-    bio?: string;
+    headline?: string | null;
+    bio?: string | null;
     skills?: string[];
     experience?: Experience[];
-    avatarUrl?: string;
+    avatarUrl?: string | null;
     paymentMethods?: string[];
   },
   stats: { average: number; count: number },

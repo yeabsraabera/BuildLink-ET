@@ -105,7 +105,6 @@ async function HeroCtas() {
 
 async function LiveHome() {
   await connection();
-  const signedIn = Boolean(await getSessionUser());
   const { stats, contractors, jobs } = await loadHomeContent();
 
   return (
@@ -241,24 +240,27 @@ async function LiveHome() {
         </div>
       </section>
 
-      <section className="mx-auto mt-14 max-w-6xl px-4">
-        <div className="rounded-xl bg-navy p-6 text-white">
-          <p>No payments are handled here.</p>
-          <p className="mt-2 text-sm text-white/80">Listings can be reviewed by an admin. This is a prototype for Southwest Ethiopia.</p>
-        </div>
+      <section id="about" className="mx-auto mt-14 max-w-6xl px-4">
+        <SectionIntro
+          kicker="About us"
+          title="About us"
+          text="BuildLink ET connects construction jobs, professionals, surplus materials, and equipment rentals in Southwest Ethiopia. The pilot is in Jimma, and the same account reaches nearby towns such as Agaro, Bedele, Mettu, and Bonga. A contractor can hire a crew, list leftover materials, and rent equipment from one login."
+        />
       </section>
 
-      <section className="mt-14 bg-navy px-4 py-12 text-center text-white">
-        <h2 className="text-2xl">Ready to get on site?</h2>
-        <p className="mt-2 text-sm text-white/80">
-          {signedIn ? "Your account is ready. Post a job or apply today." : "Create an account and post or apply today."}
-        </p>
-        <Link
-          href={signedIn ? "/dashboard" : "/register"}
-          className="mt-5 inline-flex rounded-xl bg-accent px-5 py-2.5 text-sm text-accent-ink"
-        >
-          {signedIn ? "Go to dashboard" : "Create account"}
-        </Link>
+      <section className="mx-auto mt-8 max-w-6xl px-4 pb-14">
+        <div className="grid grid-cols-2 gap-3">
+          <Link href="/jobs" className="rounded-xl bg-stat-crew px-4 py-4 text-stat-crew-ink">
+            <span className="block text-base">Browse jobs</span>
+            <span className="mt-1 block text-sm">
+              Look through open site work in Jimma and nearby towns, then send an application with a short note.
+            </span>
+          </Link>
+          <Link href="/jobs/new" className="rounded-xl bg-stat-job px-4 py-4 text-stat-job-ink">
+            <span className="block text-base">Post a job</span>
+            <span className="mt-1 block text-sm">Describe the crew, the pay, and the town so contractors can respond.</span>
+          </Link>
+        </div>
       </section>
     </>
   );
