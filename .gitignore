@@ -43,3 +43,15 @@ next-env.d.ts
 
 # demo recorder scratch files
 demo/.work/
+
+# demo videos (large files)
+demo/*.mp4
+
+# agent config (auto-generated)
+AGENTS.md
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+*.swo
